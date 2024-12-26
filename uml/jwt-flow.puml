@@ -1,0 +1,31 @@
+@startuml
+actor Client as C
+entity "HttpOnly Secure 쿠키" as Cookie
+entity "Redis" as Redis
+entity "서버 (Spring Boot)" as Server
+entity "백업 스토리지" as Backup
+
+== 로그인 및 토큰 저장 ==
+C -> Server: 로그인 요청 (ID/PW)
+Server -> Redis: Refresh Token 저장
+Server -> Cookie: JWT 저장 (HttpOnly, Secure 쿠키)
+
+== Access Token 만료 ==
+C -> Server: Access Token 만료
+
+== Refresh Token 검증 ==
+C -> Server: Refresh Token 재발급 요청
+Server -> Redis: Refresh Token 검증
+Redis --> Server: 검증 결과
+
+alt Refresh Token 유효
+    Server -> C: Access Token 재발급
+else Refresh Token 무효
+    Server -> C: 로그인 필요
+end
+
+== Redis 백업 ==
+Server -> Redis: 백업 요청 (RDB 스냅샷)
+Redis -> Backup: 백업 파일 저장 (매일 1회)
+
+@enduml
