@@ -1,5 +1,6 @@
 package com.namusd.jwtredis.config.security;
 
+import com.namusd.jwtredis.facade.JwtFacade;
 import com.namusd.jwtredis.persistence.repository.UserRepository;
 import com.namusd.jwtredis.service.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ public class SecurityConfig {
 
     private final UserRepository userRepository;
     private final CorsConfig corsConfig;
-    private final JwtService jwtService;
+    private final JwtFacade jwtFacade;
 
     @Bean
     SecurityFilterChain configure(HttpSecurity http) throws Exception {
@@ -28,7 +29,7 @@ public class SecurityConfig {
                 .csrf().disable()
                 .formLogin().disable()
                 .httpBasic().disable()
-                .apply(new NamuDsl(userRepository, corsConfig, jwtService))
+                .apply(new NamuDsl(userRepository, corsConfig, jwtFacade))
                 .and()
                 .authorizeRequests(authorize -> authorize
                         .antMatchers("/api/admin/**").hasRole("ADMIN")

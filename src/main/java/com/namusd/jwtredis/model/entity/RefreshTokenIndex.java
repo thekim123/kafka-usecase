@@ -15,7 +15,7 @@ import java.util.Map;
 public class RefreshTokenIndex {
 
     @Id
-    private String username; // 인덱스 키 (userToken:refresh:<username>)
+    private String username;
     private Map<String, String> tokenIds; // 토큰ID 맵핑
 
 }

@@ -21,4 +21,11 @@ public class RefreshToken {
     private String username;
     private String tokenValue;
     private LocalDateTime createdAt;
+
+    public RefreshToken(String id, String username, String tokenValue) {
+        this.id = id;
+        this.username = username;
+        this.tokenValue = tokenValue;
+        this.createdAt = LocalDateTime.now();
+    }
 }

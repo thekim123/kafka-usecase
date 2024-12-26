@@ -9,6 +9,7 @@ import com.namusd.jwtredis.service.RedisService;
 import com.namusd.jwtredis.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,7 +29,6 @@ public class AuthController {
     private final RedisService redisService;
     private final JwtService jwtService;
 
-    // request, response 를 필터로 뺴서 처리? 할까?
     @PostMapping(value = "/auth/refresh", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> refreshToken(
             @RequestBody JwtDto.RefreshRequest refreshToken,
@@ -36,38 +36,30 @@ public class AuthController {
             HttpServletResponse response
     ) {
         String requestUrl = request.getRequestURL().toString();
-        JwtDto.Refresh tokens = jwtFacade.buildRefreshJwt(refreshToken.getSendRefreshToken(), requestUrl);
+        JwtDto.Refresh tokens = jwtFacade.refreshJwt(refreshToken.getSendRefreshToken(), requestUrl);
         JwtUtil.withAccessToken(tokens.getAccessToken(), response);
         JwtUtil.withRefreshToken(tokens.getRefreshToken(), response);
         return ResponseEntity.ok().body("리프레시 토큰 발급 완료");
     }
 
     @DeleteMapping("/auth/logout")
-    public ResponseEntity<?> logout(
-            @RequestBody JwtDto.RefreshRequest refreshToken,
-            HttpServletRequest request
-    ) {
-        DecodedJWT jwt = jwtService.decodeRefreshToken(refreshToken.getSendRefreshToken());
-        List<RefreshToken> token = redisService.getRefreshTokensByUsername(jwt.getSubject());
-        // 토큰을 찾고, 지운다
-
-        System.out.println(token);
-        return null;
+    public ResponseEntity<?> logout(@RequestBody JwtDto.RefreshRequest refreshToken) {
+        jwtFacade.logout(refreshToken.getSendRefreshToken());
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     // 유저네임으로 토큰을 찾고 지운다
     @DeleteMapping("/auth/logout/all")
     public ResponseEntity<?> logoutAll(
-            @RequestBody JwtDto.RefreshRequest refreshToken,
-            HttpServletRequest request
+            @RequestBody JwtDto.RefreshRequest refreshToken
     ) {
         DecodedJWT jwt = jwtService.decodeRefreshToken(refreshToken.getSendRefreshToken());
         List<RefreshToken> tokens = redisService.getRefreshTokensByUsername(jwt.getSubject());
         System.out.println(tokens);
         String tokenid = jwt.getClaim("tokenId").asString();
-        RefreshToken token = redisService.getRefreshToken(tokenid)
-                .orElse(null);
-        System.out.println(token);
+//        RefreshToken token = redisService.getRefreshToken(tokenid)
+//                .orElse(null);
+//        System.out.println(token);
         return null;
     }
 

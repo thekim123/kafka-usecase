@@ -1,0 +1,48 @@
+@startuml
+!define RECTANGLE_COLOR LightBlue
+!define REDIS_COLOR LightPink
+
+package "Redis" <<Database>> {
+    class "refreshToken:<userId:tokenId>"  {
+        + id : String (userId:tokenId)
+        + username : String
+        + tokenValue : String
+        + createdAt : LocalDateTime
+    }
+
+    class "refreshTokenIndex:<username>" {
+        + username : String
+        + tokenIds : Map<String, String>
+    }
+}
+
+package "Application" {
+    class RefreshToken {
+        + id : String
+        + username : String
+        + tokenValue : String
+        + createdAt : LocalDateTime
+    }
+
+    class RefreshTokenIndex {
+        + username : String
+        + tokenIds : Map<String, String>
+    }
+
+    class RefreshTokenService {
+        + createRefreshToken(username: String, tokenValue: String)
+        + validateToken(username: String, tokenId: String)
+        + invalidateAllTokens(username: String)
+    }
+
+}
+
+RefreshTokenService --> RefreshToken : Manages
+RefreshTokenService --> RefreshTokenIndex : Updates
+
+"refreshToken:<userId:tokenId>" <-- RefreshToken : Stored in
+"refreshTokenIndex:<username>" <-- RefreshTokenIndex : Stored in
+
+RefreshTokenIndex --> RefreshToken : Maps tokenIds
+
+@enduml

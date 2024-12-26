@@ -1,10 +1,15 @@
 package com.namusd.jwtredis.service;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.namusd.jwtredis.handler.ex.InvalidRefreshTokenException;
 import com.namusd.jwtredis.model.entity.RefreshToken;
 import com.namusd.jwtredis.model.entity.RefreshTokenIndex;
+import com.namusd.jwtredis.model.vo.RefreshTokenVo;
 import com.namusd.jwtredis.persistence.repository.RefreshTokenIndexRepository;
 import com.namusd.jwtredis.persistence.repository.TokenRepository;
+import com.namusd.jwtredis.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -25,14 +30,14 @@ public class RedisService {
         refreshTokenRepository.save(refreshToken);
     }
 
-    public void saveRefreshTokenIndex(String username, String tokenId) {
-        // Step 2: RefreshTokenIndex 업데이트
-        Optional<RefreshTokenIndex> indexOpt = tokenIndexRepository.findByUsername(username);
+    // RefreshTokenIndex 업데이트
+    public void saveRefreshTokenIndex(String username, String tokenId, String tokenValue) {
+        Optional<RefreshTokenIndex> indexOpt = tokenIndexRepository.findById(username);
 
         RefreshTokenIndex index;
         index = indexOpt.orElseGet(() -> new RefreshTokenIndex(username, new HashMap<>()));
 
-        index.getTokenIds().put(tokenId, tokenId);
+        index.getTokenIds().put(tokenId, tokenValue);
         tokenIndexRepository.save(index);
     }
 
@@ -43,25 +48,42 @@ public class RedisService {
         return refreshTokenRepository.findByUsername(username);
     }
 
-    /**
-     * 특정 토큰 조회
-     */
-    public Optional<RefreshToken> getRefreshToken(String tokenId) {
-        return refreshTokenRepository.findById(tokenId);
+    public void validateRefreshToken(String tokenValue, DecodedJWT decodedJWT) {
+        JwtUtil.isValidJwt(tokenValue);
+        String tokenId = decodedJWT.getClaim("tokenId").asString();
+
+        RefreshToken refreshToken = refreshTokenRepository.findById(tokenId)
+                .orElseThrow(() -> new AccessDeniedException("리프레시 토큰이 존재하지 않습니다."));
+
+        String value = tokenValue.substring("Bearer ".length());
+        if (!refreshToken.getTokenValue().equals(value)) {
+            throw new InvalidRefreshTokenException("리프레시 토큰 값이 일치하지 않습니다.");
+        }
     }
 
-    /**
-     * 특정 토큰 삭제
-     */
-    public void deleteRefreshToken(String id) {
-        refreshTokenRepository.deleteById(id);
+    public RefreshTokenVo getRefreshTokenInfo(DecodedJWT decodedJWT) {
+        String tokenId = decodedJWT.getClaim("tokenId").asString();
+        String username = decodedJWT.getSubject();
+
+        return RefreshTokenVo.builder()
+                .tokenId(tokenId)
+                .username(username)
+                .refreshToken(decodedJWT.getToken())
+                .build();
     }
 
-    /**
-     * 사용자 모든 토큰 삭제
-     */
-    public void deleteAllTokensByUserId(String userId) {
-        List<RefreshToken> tokens = getRefreshTokensByUsername(userId);
-        tokens.forEach(token -> refreshTokenRepository.deleteById(token.getId()));
+
+    public void deleteRefreshToken(String tokenId) {
+        refreshTokenRepository.deleteById(tokenId);
     }
+
+    public void deleteRefreshTokenIndex(String username, String tokenId) {
+        Optional<RefreshTokenIndex> indexOpt = tokenIndexRepository.findById(username);
+        RefreshTokenIndex index;
+        index = indexOpt.orElseGet(() -> new RefreshTokenIndex(username, new HashMap<>()));
+        index.getTokenIds().remove(tokenId);
+        tokenIndexRepository.save(index);
+    }
+
+
 }

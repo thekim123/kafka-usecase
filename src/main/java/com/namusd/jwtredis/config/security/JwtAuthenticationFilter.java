@@ -2,6 +2,8 @@ package com.namusd.jwtredis.config.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.namusd.jwtredis.config.auth.PrincipalDetails;
+import com.namusd.jwtredis.facade.JwtFacade;
+import com.namusd.jwtredis.model.dto.JwtDto;
 import com.namusd.jwtredis.model.dto.LoginRequestDto;
 import com.namusd.jwtredis.model.entity.User;
 import com.namusd.jwtredis.service.JwtService;
@@ -23,14 +25,14 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
-    private final JwtService jwtService;
+    private final JwtFacade jwtFacade;
 
     public JwtAuthenticationFilter(
             AuthenticationManager authenticationManager,
-            JwtService jwtService
+            JwtFacade jwtFacade
     ) {
         this.authenticationManager = authenticationManager;
-        this.jwtService = jwtService;
+        this.jwtFacade = jwtFacade;
         setFilterProcessesUrl("/auth/login"); // /login 엔드포인트로 요청 처리
     }
 
@@ -57,10 +59,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         User loginUser = ((PrincipalDetails) auth.getPrincipal()).getUser();
         String requestUrl = request.getRequestURL().toString();
 
-        String jwtToken = jwtService.generateAccessToken(loginUser, requestUrl);
-        JwtUtil.withAccessToken(jwtToken, response);
-        String refresh = jwtService.generateRefreshToken(loginUser, requestUrl);
-        JwtUtil.withRefreshToken(refresh, response);
+        JwtDto.Refresh tokens = jwtFacade.generateJwt(loginUser, requestUrl);
+        JwtUtil.withAccessToken(tokens.getAccessToken(), response);
+        JwtUtil.withRefreshToken(tokens.getRefreshToken(), response);
     }
 
 }

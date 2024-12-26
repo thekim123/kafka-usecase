@@ -17,9 +17,18 @@ docker run -d --name mariadb-container -e MYSQL_ROOT_PASSWORD=1234 -e MYSQL_DATA
 docker pull redis:latest
 ```
 - 컨테이너 실행
+
+볼륨이 있는 명령어
 ```shell
 docker run -d --name redis-container -p 6379:6379 -v redis-data:/data --restart unless-stopped redis:latest --requirepass 1234
 ```
+
+볼륨이 없는 명령어
+```shell
+docker run -d --name redis-container -p 6379:6379 --restart unless-stopped redis:latest --requirepass 1234
+```
+
+
 
 ## 2. 테이블 생성
 ### 1) 유저 테이블 생성
@@ -35,7 +44,12 @@ CREATE TABLE User (
 ```
 
 
-## 3. redis 디버깅 쿼리
+## 3. redis 디버깅
+- RBook 설치
+```shell
+npx rbook
+```
+
 - `RefreshTokenIndex` 조회
 ```redis
 HGETALL refreshTokenIndex:<username>
