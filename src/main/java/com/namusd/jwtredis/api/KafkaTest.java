@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -11,8 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class KafkaTest {
     private final KafkaTemplate<String, String> kafkaTemplate;
 
-    @GetMapping("/kafka/produce")
-    public void sendMessage(String message) {
+    @GetMapping("/kafka/produce/{message}")
+    public void sendMessage(@PathVariable String message) {
         kafkaTemplate.send("video-processing-request", message);
     }
 
