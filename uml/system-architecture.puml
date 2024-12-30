@@ -1,0 +1,47 @@
+@startuml VideoProcessingWithWebSocket
+
+actor User
+
+package "Frontend(Vue.js)" {
+    User --> Frontend: 실시간 요청 및 수정
+}
+
+package "Backend(Spring Boot)" {
+    Frontend --> Backend: API 요청
+    Backend --> WebSocket: 실시간 프레임 전송
+    WebSocket --> Frontend: 스트리밍 데이터
+    Backend --> KafkaRequest: Kafka 메시지 전송
+    KafkaResponse --> Backend: Kafka 메시지 수신
+    Backend --> Database: 메타데이터 저장
+    Backend --> Storage: 데이터 저장
+}
+
+package "Kafka" {
+    Backend --> KafkaRequest: 요청 토픽
+    KafkaRequest --> PythonEngine: 처리 요청
+    PythonEngine --> KafkaResponse: 처리 결과 반환
+}
+
+package "Python 엔진(OpenCV)" {
+    KafkaRequest --> PythonEngine: 프레임 분할/비식별화
+    PythonEngine --> Storage: 프레임 저장
+    PythonEngine --> KafkaResponse: 결과 전송
+}
+
+package "Storage(S3, MinIO)" {
+    PythonEngine --> Storage: 프레임 저장
+    Backend --> Storage: 최종 영상 저장
+}
+
+package "Database(MariaDB/MySQL)" {
+    Backend --> Database: 메타데이터 저장
+}
+
+Frontend --> Backend: 수정 요청
+Frontend --> WebSocket: 실시간 수정 데이터
+WebSocket --> Backend: 수정된 프레임 반영
+Backend --> Database: 최종 메타데이터 저장
+Backend --> Storage: 최종 프레임 저장
+Frontend --> Storage: 최종 영상 확인
+
+@enduml

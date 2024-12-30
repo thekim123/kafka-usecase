@@ -15,7 +15,7 @@ public class UserRepository {
     private final UserMapper userMapper;
     private final SqlSession sqlSession;
 
-    public Optional<User> findById(Integer id) {
+    public Optional<User> findById(Long id) {
         return Optional.ofNullable(userMapper.selectById(id));
     }
 

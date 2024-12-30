@@ -16,6 +16,7 @@ public class PrincipalDetails implements UserDetails {
         this.user = user;
     }
 
+    // 잘못된 코드
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();

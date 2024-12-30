@@ -1,0 +1,42 @@
+@startuml Kafka_Video_Processing_Architecture
+
+
+skinparam defaultFontName Arial
+skinparam componentStyle rectangle
+skinparam arrowThickness 1
+
+
+actor "Frontend (Vue.js)" as Frontend
+component "\n\n\nBackend\n(Spring Boot)\n\n\n" as Backend
+queue "Kafka Topic:\nvideo-processing-request" as KafkaRequest
+queue "Kafka Topic:\nvideo-processing-response" as KafkaResponse
+queue "Kafka Topic:\nvideo-frame-update" as KafkaFrameUpdate
+queue "\nKafka Topic:\nvideo-final-result\n" as KafkaFinalResult
+component "\n\nPython Engine\n(Consumer)\n\n" as PythonEngine
+database "\nStorage\n\n" as Storage
+database "Metadata DB" as MetadataDB
+
+Frontend --> Backend : (1) 영상 업로드 및 저장
+Backend --> Storage : 저장된 영상 경로 전달
+
+Backend --> KafkaRequest : (2) 처리 요청 메시지 발행
+
+KafkaRequest --> PythonEngine : (3) 프레임 분할 및 비식별 처리
+PythonEngine --> Storage : 비식별화된 프레임 저장
+PythonEngine --> KafkaResponse : (4) 처리 결과 메시지 발행
+
+KafkaResponse --> Backend : (5) 메타데이터 저장 및 사용자 반환
+Backend --> MetadataDB : 메타데이터 저장
+Backend --> Frontend : 프레임 메타데이터 반환
+
+Frontend --> Backend : (6) 사용자 프레임 보정
+Backend --> KafkaFrameUpdate : (7) 수정된 프레임 전달
+
+KafkaFrameUpdate --> PythonEngine : (8) 최종 영상 합성
+PythonEngine --> Storage : 최종 영상 저장
+PythonEngine --> KafkaFinalResult : (9) 최종 영상 경로 반환
+
+KafkaFinalResult --> Backend : 최종 영상 메타데이터 저장
+Backend --> Frontend : 최종 영상 URL 반환
+
+@enduml

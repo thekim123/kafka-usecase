@@ -25,6 +25,8 @@ repositories {
 
 ext {
     set('snippetsDir', file("build/generated-snippets"))
+    set('kafka.version', '3.2.3') // 사용하려는 Kafka 클라이언트 버전
+    set('spring-kafka.version', '2.9.5') // 해당 Kafka 클라이언트와 호환되는 Spring for Apache Kafka 버전
 }
 
 dependencies {
@@ -40,6 +42,16 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.0'
+
+    // kafka 관련 의존성
+    // https://mvnrepository.com/artifact/org.springframework.kafka/spring-kafka
+    implementation 'org.springframework.kafka:spring-kafka'
+//    implementation 'io.confluent:kafka-avro-serializer'
+//    implementation 'io.confluent:kafka-schema-registry-client'
+//    implementation 'org.apache.avro:avro'
+//    implementation 'org.springframework.kafka:spring-kafka-streams'
+
+    // kafka 관련 의존성
 
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'

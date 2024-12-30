@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 9080
 
 spring:
   application:
@@ -18,6 +18,18 @@ spring:
       password: 1234
   jpa:
     open-in-view: false
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: video-processing-group
+      auto-offset-reset: earliest
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    properties:
+      schema.registry.url: http://localhost:8081\
+
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml

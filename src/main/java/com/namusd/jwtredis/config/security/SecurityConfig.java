@@ -33,7 +33,7 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests(authorize -> authorize
                         .antMatchers("/api/admin/**").hasRole("ADMIN")
-                        .antMatchers("/api/board/**", "/swagger-ui.html").hasAnyRole("USER", "ADMIN")
+                        .antMatchers("/swagger-ui.html").hasAnyRole("USER", "ADMIN")
                         .antMatchers("/api/bookmark/**").hasAnyRole("USER", "GUEST", "ADMIN")
                         .antMatchers("/api/user/join", "/chat/**", "/api/region/**", "/api/gati/**").permitAll()
                         .anyRequest().permitAll())
