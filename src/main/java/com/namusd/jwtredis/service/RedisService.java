@@ -9,11 +9,13 @@ import com.namusd.jwtredis.persistence.repository.RefreshTokenIndexRepository;
 import com.namusd.jwtredis.persistence.repository.TokenRepository;
 import com.namusd.jwtredis.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -22,6 +24,7 @@ public class RedisService {
 
     private final TokenRepository refreshTokenRepository;
     private final RefreshTokenIndexRepository tokenIndexRepository;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     /**
      * 리프레시 토큰 저장
@@ -49,14 +52,12 @@ public class RedisService {
     }
 
     public void validateRefreshToken(String tokenValue, DecodedJWT decodedJWT) {
-        JwtUtil.isValidJwt(tokenValue);
         String tokenId = decodedJWT.getClaim("tokenId").asString();
 
         RefreshToken refreshToken = refreshTokenRepository.findById(tokenId)
                 .orElseThrow(() -> new AccessDeniedException("리프레시 토큰이 존재하지 않습니다."));
 
-        String value = tokenValue.substring("Bearer ".length());
-        if (!refreshToken.getTokenValue().equals(value)) {
+        if (!refreshToken.getTokenValue().equals(tokenValue)) {
             throw new InvalidRefreshTokenException("리프레시 토큰 값이 일치하지 않습니다.");
         }
     }
@@ -83,6 +84,27 @@ public class RedisService {
         index = indexOpt.orElseGet(() -> new RefreshTokenIndex(username, new HashMap<>()));
         index.getTokenIds().remove(tokenId);
         tokenIndexRepository.save(index);
+    }
+
+    // 사용자 토큰 인덱스를 조회
+    public RefreshTokenIndex getUserTokenIndex(String username) {
+        return tokenIndexRepository.findById(username).orElseThrow(()->new RuntimeException(" 아몰랑"));
+    }
+
+    // 모든 토큰 삭제
+    public void invalidateTokens(RefreshTokenIndex tokenIndex) {
+        if (tokenIndex == null || tokenIndex.getTokenIds() == null) {
+            return;
+        }
+
+        for (String tokenId : tokenIndex.getTokenIds().keySet()) {
+            redisTemplate.delete("refreshToken:" + tokenId); // 각 토큰 삭제
+        }
+    }
+
+    // 토큰 인덱스 삭제
+    public void deleteTokenIndex(String username) {
+        redisTemplate.delete("refreshTokenIndex:" + username);
     }
 
 

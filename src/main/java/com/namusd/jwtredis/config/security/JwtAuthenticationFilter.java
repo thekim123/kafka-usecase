@@ -9,6 +9,8 @@ import com.namusd.jwtredis.model.entity.User;
 import com.namusd.jwtredis.service.JwtService;
 import com.namusd.jwtredis.util.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -20,6 +22,8 @@ import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -54,14 +58,20 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     }
 
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
-                                            Authentication auth) {
+    protected void successfulAuthentication(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain chain,
+            Authentication auth
+    ) throws IOException {
         User loginUser = ((PrincipalDetails) auth.getPrincipal()).getUser();
         String requestUrl = request.getRequestURL().toString();
 
         JwtDto.Refresh tokens = jwtFacade.generateJwt(loginUser, requestUrl);
-        JwtUtil.withAccessToken(tokens.getAccessToken(), response);
         JwtUtil.withRefreshToken(tokens.getRefreshToken(), response);
+        Map<String, String> access = new HashMap<>();
+        access.put("access", tokens.getAccessToken());
+        new ObjectMapper().writeValue(response.getOutputStream(), ResponseEntity.status(HttpStatus.OK).body(access));
     }
 
 }

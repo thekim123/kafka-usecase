@@ -1,5 +1,6 @@
 package com.namusd.jwtredis.model.entity;
 
+import com.namusd.jwtredis.model.constant.JwtProperties;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
@@ -11,9 +12,8 @@ import java.util.Map;
 @NoArgsConstructor
 @Getter
 @ToString
-@RedisHash(value = "refreshTokenIndex", timeToLive = 604800) // 7일 TTL
+@RedisHash(value = "refreshTokenIndex", timeToLive = JwtProperties.REFRESH_EXPIRATION_TIME)
 public class RefreshTokenIndex {
-
     @Id
     private String username;
     private Map<String, String> tokenIds; // 토큰ID 맵핑

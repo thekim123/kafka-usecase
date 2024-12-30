@@ -17,10 +17,9 @@ import java.util.UUID;
 public class JwtService {
 
     public DecodedJWT decodeRefreshToken(String refreshToken) {
-        String refresh = refreshToken.substring("Bearer ".length());
         Algorithm algorithm = Algorithm.HMAC512(JwtProperties.SECRET);
         JWTVerifier verifier = JWT.require(algorithm).build();
-        return verifier.verify(refresh);
+        return verifier.verify(refreshToken);
     }
 
     public String generateAccessToken(User loginUser, String requestUrl) {

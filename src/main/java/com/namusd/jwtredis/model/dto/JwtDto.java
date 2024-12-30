@@ -23,4 +23,13 @@ public class JwtDto {
         @JsonProperty("sendRefreshToken")
         private String sendRefreshToken;
     }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @ToString
+    public static class DeviceRemoteLogout {
+        @JsonProperty("deviceId")
+        private String deviceId;
+    }
 }

@@ -4,9 +4,12 @@ import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.namusd.jwtredis.model.constant.JwtProperties;
 import org.springframework.http.ResponseCookie;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.time.Duration;
+import java.util.Objects;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -32,6 +35,18 @@ public class JwtUtil {
                 .maxAge(Duration.ofMillis(JwtProperties.REFRESH_EXPIRATION_TIME))
                 .build();
         response.addHeader("Set-Cookie", refreshCookie.toString());
+    }
+
+    public static String getRefreshTokenFromCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (Objects.equals("refreshToken", cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
     }
 
 }
