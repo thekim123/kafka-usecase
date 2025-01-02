@@ -43,6 +43,16 @@ CREATE TABLE User (
 );
 ```
 
+```sql
+CREATE TABLE Board (
+                      id int AUTO_INCREMENT PRIMARY KEY,
+                      title VARCHAR(100) NOT NULL UNIQUE,
+                      content VARCHAR(4000) NOT NULL,
+                      authorId int NOT NULL,
+                      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+```
 
 ## 3. redis 디버깅
 - RBook 설치

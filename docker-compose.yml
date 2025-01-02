@@ -137,15 +137,15 @@ services:
     container_name: spring-app
     restart: unless-stopped
     ports:
-      - "8080:8080"
+      - "8080:9080"
     environment:
       SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/namu-jwt-test
       SPRING_DATASOURCE_USERNAME: namu-jwt-test
       SPRING_DATASOURCE_PASSWORD: 1234
       SPRING_REDIS_HOST: redis
-      SPRING_REDIS_PORT: 6379
+      SPRING_REDIS_PORT: 637
       SPRING_REDIS_PASSWORD: 1234
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:19092
     depends_on:
       - mariadb
       - redis
