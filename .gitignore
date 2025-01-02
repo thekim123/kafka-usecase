@@ -85,6 +85,7 @@ yarn-error.log*
 
 ### Docker ###
 docker-compose.override.yml
-docker-data/
+docker-data/*
+!docker-data/.gitkeep
 *.env
 
