@@ -24,7 +24,6 @@ public class RedisConfig {
         String host = env.getProperty("spring.redis.host", "127.0.0.1");
         int port = Integer.parseInt(env.getProperty("spring.redis.port", "6379"));
         String password = env.getProperty("spring.redis.password", "1234");
-        log.error("host: {}, port: {}, pw: {}", host, port, password);
 
         RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
         config.setHostName(host);
