@@ -88,5 +88,3 @@ docker-compose.override.yml
 docker-data/
 *.env
 
-### UML ###
-*.puml
