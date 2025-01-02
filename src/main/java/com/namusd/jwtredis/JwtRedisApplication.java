@@ -10,7 +10,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class JwtRedisApplication {
 
     public static void main(String[] args) {
-        System.out.println("application start!!!!!!");
         SpringApplication.run(JwtRedisApplication.class, args);
     }
 
