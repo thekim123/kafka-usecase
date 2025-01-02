@@ -29,7 +29,6 @@ spring:
     properties:
       schema.registry.url: http://localhost:8081\
 
-
 mybatis:
   mapper-locations: classpath:mapper/*.xml
 
