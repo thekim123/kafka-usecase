@@ -6,16 +6,16 @@ spring:
     name: jwt-redis
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://mariadb-container:3321/namu-jwt-test
+    url: jdbc:mariadb://Di-mariadb:3321/namu-jwt-test
     username: namu-jwt-test
     password: 1234
 
 
-  data:
-    redis:
-      host: DI-redis
-      port: 6379
-      password: 1234
+  redis:
+    host: DI-redis
+    port: 6379
+    password: 1234
+
   jpa:
     open-in-view: false
 
