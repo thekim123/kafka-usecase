@@ -6,21 +6,23 @@ networks:
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:7.3.0
-    hostname: zookeeper
-    container_name: zookeeper
+    hostname: DI-zookeeper
+    container_name: DI-zookeeper
     ports:
       - "2181:2181"
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_SERVER_ID: 1
       ZOOKEEPER_SERVERS: zookeeper:2888:3888
+    volumes:
+      - ./docker-data/zookeeper:/var/lib/zookeeper
     networks:
       - kafka-network
 
   kafka:
     image: confluentinc/cp-kafka:7.3.0
-    hostname: kafka
-    container_name: kafka
+    hostname: DI-kafka
+    container_name: DI-kafka
     ports:
       - "9092:9092"
       - "29092:29092"
@@ -42,13 +44,15 @@ services:
       KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "true"
     depends_on:
       - zookeeper
+    volumes:
+      - ./docker-data/kafka:/var/lib/kafka
     networks:
       - kafka-network
 
   schema-registry:
     image: confluentinc/cp-schema-registry:7.3.0
-    hostname: schema-registry
-    container_name: schema-registry
+    hostname: DI-schema-registry
+    container_name: DI-schema-registry
     ports:
       - "8081:8081"
     environment:
@@ -58,30 +62,35 @@ services:
     depends_on:
       - zookeeper
       - kafka
+    volumes:
+      - ./docker-data/schema-registry:/var/lib/schema-registry
     networks:
       - kafka-network
 
   postgresql:
     image: postgres:14
-    hostname: postgresql
-    container_name: postgresql
+    hostname: DI-postgresql
+    container_name: DI-postgresql
     environment:
       POSTGRES_DB: "conduktor-console"
       POSTGRES_USER: "conduktor"
       POSTGRES_PASSWORD: "change_me"
       POSTGRES_HOST_AUTH_METHOD: "scram-sha-256"
+    volumes:
+      - ./docker-data/postgresql:/var/lib/postgresql/data
     networks:
       - kafka-network
 
   conduktor-console:
     image: conduktor/conduktor-console:1.26.0
-    hostname: conduktor-console
-    container_name: conduktor-console
+    hostname: DI-conduktor-console
+    container_name: DI-conduktor-console
     depends_on:
       - postgresql
     ports:
       - "9080:8080"
     volumes:
+      - ./docker-data/conduktor-console:/var/lib/conduktor-console
       - type: bind
         source: "./.config/platform-config.yml"
         target: /opt/conduktor/platform-config.yaml
@@ -91,19 +100,21 @@ services:
     networks:
       - kafka-network
 
-
   conduktor-monitoring:
-    hostname: conduktor-monitoring
-    container_name: conduktor-monitoring
+    hostname: DI-conduktor-monitoring
+    container_name: DI-conduktor-monitoring
     image: conduktor/conduktor-console-cortex:1.26.0
     environment:
       CDK_CONSOLE-URL: "http://conduktor-console:8080"
+    volumes:
+      - ./docker-data/conduktor-monitoring:/var/lib/conduktor-monitoring
     networks:
       - kafka-network
 
   mariadb:
     image: mariadb:latest
-    container_name: mariadb-container
+    hostname: DI-mariadb
+    container_name: DI-mariadb
     restart: unless-stopped
     ports:
       - "3321:3306"
@@ -113,18 +124,19 @@ services:
       MYSQL_USER: "namu-jwt-test"
       MYSQL_PASSWORD: "1234"
     volumes:
-      - mariadb-data:/var/lib/mysql
+      - ./docker-data/mariadb:/var/lib/mysql
     networks:
       - kafka-network
 
   redis:
     image: redis:latest
-    container_name: redis-container
+    hostname: DI-redis
+    container_name: DI-redis
     restart: unless-stopped
     ports:
       - "6379:6379"
     volumes:
-      - redis-data:/data
+      - ./docker-data/redis:/data
     command: ["redis-server", "--appendonly", "yes", "--requirepass", "1234"]
     networks:
       - kafka-network
@@ -134,7 +146,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: spring-app
+    hostname: DI-spring-app
+    container_name: DI-spring-app
     restart: unless-stopped
     ports:
       - "8080:9080"
@@ -143,19 +156,14 @@ services:
       SPRING_DATASOURCE_USERNAME: namu-jwt-test
       SPRING_DATASOURCE_PASSWORD: 1234
       SPRING_REDIS_HOST: redis
-      SPRING_REDIS_PORT: 637
+      SPRING_REDIS_PORT: 6379
       SPRING_REDIS_PASSWORD: 1234
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:19092
     depends_on:
       - mariadb
       - redis
       - kafka
+    volumes:
+      - ./docker-data/spring-app:/var/lib/spring-app
     networks:
       - kafka-network
-
-
-volumes:
-  redis-data:
-    driver: local
-  mariadb-data:
-    driver: local
