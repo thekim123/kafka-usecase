@@ -44,7 +44,6 @@ dependencies {
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.0'
 
     // kafka 관련 의존성
-    // https://mvnrepository.com/artifact/org.springframework.kafka/spring-kafka
     implementation 'org.springframework.kafka:spring-kafka'
 //    implementation 'io.confluent:kafka-avro-serializer'
 //    implementation 'io.confluent:kafka-schema-registry-client'
@@ -52,6 +51,10 @@ dependencies {
 //    implementation 'org.springframework.kafka:spring-kafka-streams'
 
     // kafka 관련 의존성
+
+    // MinIO Client
+    implementation 'io.minio:minio:8.5.7'
+
 
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'

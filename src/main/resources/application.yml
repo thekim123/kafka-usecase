@@ -1,5 +1,5 @@
 server:
-  port: 9080
+  port: 8080
 
 spring:
   application:
@@ -29,6 +29,12 @@ spring:
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
     properties:
       schema.registry.url: http://DI-schema-registry:8081\
+
+minio:
+  endpoint: http://localhost:9000
+  accessKey: admin
+  secretKey: admin123
+  bucket: di-bucket
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml
