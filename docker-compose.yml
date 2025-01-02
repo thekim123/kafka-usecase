@@ -167,3 +167,20 @@ services:
       - ./docker-data/spring-app:/var/lib/spring-app
     networks:
       - kafka-network
+
+  ## MinIO 추가
+  minio:
+    image: quay.io/minio/minio
+    hostname: DI-minio
+    container_name: DI-minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: admin123
+    volumes:
+      - ./docker-data/minio:/data
+    command: server --console-address ":9001" /data
+    networks:
+      - kafka-network
