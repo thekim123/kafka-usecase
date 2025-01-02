@@ -85,7 +85,6 @@ yarn-error.log*
 
 ### Docker ###
 docker-compose.override.yml
-docker-data/*
-!docker-data/.keep
+docker-data/
 *.env
 
