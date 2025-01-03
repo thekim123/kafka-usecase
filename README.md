@@ -99,3 +99,15 @@ test: 테스트 추가
 rename: 파일명 수정, 경로 이동
 remove: 삭제 
 ```
+
+
+## 5. docker-compose 
+```
+docker-compose up --build -d
+```
+
+일반 *``up -d``*옵션 사용하면 새롭게 빌드된 jar 파일을 사용하지 않고, 
+
+기존 jar로 dockerfile이 만든 캐시된 이미지를 사용하기 때문에 변경사항이 제대로 반영되지 않을 수 있음.
+
+매번 실행 시 강제로 이미지를 빌드하려면 *``--build``* 플래그를 추가하면 됨
