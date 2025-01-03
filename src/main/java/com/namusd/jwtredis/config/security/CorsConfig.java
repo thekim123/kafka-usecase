@@ -34,7 +34,7 @@ public class CorsConfig {
                         "Content-Type", "Access-Control-Request-Method",
                         "Access-Control-Request-Headers"
                 ));
-        config.addAllowedOrigin("http://localhost:5173");
+        config.addAllowedOrigin("http://localhost:3000");
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
 
         source.registerCorsConfiguration("/**", config);
