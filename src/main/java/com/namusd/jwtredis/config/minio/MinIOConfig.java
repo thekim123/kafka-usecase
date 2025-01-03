@@ -13,12 +13,12 @@ public class MinIOConfig {
 
     @Bean
     public MinioClient minioClient() {
-        System.out.println("minio-endpoint: "+env.getProperty("minio.endpoint", "http://localhost:9000"));
+        System.out.println("minio-endpoint: "+env.getProperty("spring.minio.endpoint", "http://localhost:9000"));
         return MinioClient.builder()
-                .endpoint(env.getProperty("minio.endpoint", "http://localhost:9000"))
+                .endpoint(env.getProperty("spring.minio.endpoint", "http://localhost:9000"))
                 .credentials(
-                        env.getProperty("minio.accessKey", "admin"),
-                        env.getProperty("minio.secretKey", "admin123")
+                        env.getProperty("spring.minio.accessKey", "admin"),
+                        env.getProperty("spring.minio.secretKey", "admin123")
                 )
                 .build();
     }

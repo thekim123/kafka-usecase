@@ -23,7 +23,7 @@ public class AttachFileServiceImpl implements AttachFileService {
 
     private final MinioClient minioClient;
 
-    @Value("${minio.bucket}")
+    @Value("${spring.minio.bucket}")
     private String bucket;
 
     @Override

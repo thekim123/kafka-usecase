@@ -6,13 +6,13 @@ spring:
     name: jwt-redis
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://DI-mariadb:3321/namu-jwt-test
+    url: jdbc:mariadb://mariadb:3321/namu-jwt-test
     username: namu-jwt-test
     password: 1234
 
 
   redis:
-    host: DI-redis
+    host: redis
     port: 6379
     password: 1234
 
@@ -28,13 +28,13 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
     properties:
-      schema.registry.url: http://DI-schema-registry:8081\
+      schema.registry.url: http://schema-registry:8081
 
-minio:
-  endpoint: http://localhost:9000
-  accessKey: admin
-  secretKey: admin123
-  bucket: di-bucket
+  minio:
+    endpoint: http://minio:9000
+    accessKey: admin
+    secretKey: admin123
+    bucket: di-bucket
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml
