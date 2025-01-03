@@ -21,6 +21,7 @@ spring:
 
   kafka:
 #    bootstrap-servers: localhost:9092
+    bootstrap-servers: kafka:19092  # Kafka 클라이언트가 Kafka 클러스터와 연결하는 데 필요한 브로커 주소
     consumer:
       group-id: video-processing-group
       auto-offset-reset: earliest

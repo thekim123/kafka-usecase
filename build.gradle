@@ -51,6 +51,8 @@ dependencies {
 //    implementation 'org.springframework.kafka:spring-kafka-streams'
 
     // kafka 관련 의존성
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+
 
     // MinIO Client
     implementation 'io.minio:minio:8.5.7'

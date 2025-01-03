@@ -1,0 +1,44 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: jwt-redis
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:3321/test-db  # 테스트용 MariaDB
+    username: test-user
+    password: test-password
+
+  redis:
+    host: localhost  # 테스트 환경에서 Redis 호스트
+    port: 6379
+    password: test-redis-password
+
+  jpa:
+    open-in-view: false  # 동일
+
+  kafka:
+    bootstrap-servers: localhost:9092  # 테스트 환경에서 Kafka를 로컬로 실행
+    consumer:
+      group-id: test-video-processing-group
+      auto-offset-reset: earliest
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    properties:
+      schema.registry.url: http://localhost:8081  # 테스트 환경 Schema Registry
+
+  minio:
+    endpoint: http://localhost:9000
+    accessKey: test-admin
+    secretKey: test-admin123
+    bucket: test-bucket
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+
+mybatis-plus:
+  configuration:
+    lazy-loading-enabled: true  # 동일
+    aggressive-lazy-loading: false  # 동일

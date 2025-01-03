@@ -43,6 +43,7 @@ CREATE TABLE User (
 );
 ```
 
+### 2) 게시물 테이블 생성
 ```sql
 CREATE TABLE Board (
                       id int AUTO_INCREMENT PRIMARY KEY,
@@ -53,6 +54,7 @@ CREATE TABLE Board (
                       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 ```
+
 
 ## 3. redis 디버깅
 - RBook 설치
