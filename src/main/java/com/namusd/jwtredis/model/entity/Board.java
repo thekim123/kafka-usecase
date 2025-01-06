@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @AllArgsConstructor
 @Builder
-@TableName(value = "Board")
+@TableName(value = "board")
 public class Board {
     @TableId(value = "id", type = IdType.AUTO) // AUTO_INCREMENT 사용
     private Long id;
