@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface AttachFileService {
 
-    void uploadFile(MultipartFile file);
+    void uploadFile(MultipartFile file, String dir);
 
     void uploadFiles(List<MultipartFile> files);
 

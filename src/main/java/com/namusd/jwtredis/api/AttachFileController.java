@@ -27,7 +27,7 @@ public class AttachFileController {
      */
     @PostMapping("/{dir}")
     public ResponseEntity<?> uploadFile(@PathVariable String dir, @RequestParam("file") MultipartFile file) {
-        attachFileService.uploadFile(file);
+        attachFileService.uploadFile(file, dir);
         return ResponseEntity.created(URI.create("asdf")).build();
     }
 

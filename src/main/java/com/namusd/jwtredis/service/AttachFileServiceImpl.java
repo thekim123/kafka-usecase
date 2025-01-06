@@ -10,10 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.List;
 
 @Service
@@ -28,12 +24,13 @@ public class AttachFileServiceImpl implements AttachFileService {
 
     @Override
     @Transactional
-    public void uploadFile(MultipartFile file) {
+    public void uploadFile(MultipartFile file, String dir) {
+        String objectName = dir + "/" + file.getOriginalFilename();
         try {
             minioClient.putObject(
                     PutObjectArgs.builder()
                             .bucket(bucket)
-                            .object(file.getOriginalFilename())
+                            .object(objectName)
                             .stream(file.getInputStream(), file.getSize(), -1)
                             .contentType(file.getContentType())
                             .build()
