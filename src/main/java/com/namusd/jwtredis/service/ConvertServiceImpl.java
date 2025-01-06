@@ -3,9 +3,11 @@ package com.namusd.jwtredis.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.namusd.jwtredis.model.dto.ConvertDto;
+import io.minio.MinioClient;
 import com.namusd.jwtredis.util.ParseUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,8 @@ public class ConvertServiceImpl implements ConvertService {
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final Map<String, CompletableFuture<ConvertDto.Response>> responseFutures = new ConcurrentHashMap<>();  // 요청 ID와 CompletableFuture를 매핑하여 응답을 처리
 
+    @Value("${spring.minio.bucket}")
+    private String bucket;
 
     @Override
     public ConvertDto.Response sendUrlAndGetProcessedUrl(ConvertDto.Request request) {
@@ -74,5 +78,22 @@ public class ConvertServiceImpl implements ConvertService {
     }
 
 
+    // Helper 메서드: 객체를 JSON 문자열로 변환
+    private String toJson(Object object) {
+        try {
+            return new ObjectMapper().writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Failed to convert object to JSON", e);
+        }
+    }
+
+    // Helper 메서드: JSON 문자열을 객체로 변환
+    private <T> T fromJson(String json, Class<T> clazz) {
+        try {
+            return new ObjectMapper().readValue(json, clazz);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Failed to convert JSON to object", e);
+        }
+    }
 
 }
