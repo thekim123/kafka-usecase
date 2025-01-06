@@ -1,8 +1,13 @@
 package com.namusd.jwtredis.service;
 
+import com.namusd.jwtredis.handler.ex.EntityNotFoundException;
+import com.namusd.jwtredis.model.dto.AttachFileDto;
 import com.namusd.jwtredis.model.entity.AttachFile;
+import com.namusd.jwtredis.persistence.repository.AttachFileRepository;
+import com.namusd.jwtredis.util.FileUtil;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
+import io.minio.RemoveObjectArgs;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,7 +15,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -18,12 +26,38 @@ import java.util.List;
 public class AttachFileServiceImpl implements AttachFileService {
 
     private final MinioClient minioClient;
+    private final AttachFileRepository fileRepository;
 
     @Value("${spring.minio.bucket}")
     private String bucket;
 
+    @Value("spring.minio.endpoint")
+    private String endpoint;
+
+    /**
+     * 파일에 대한 정보를 DB에 저장.
+     * 실제 파일은 MinIO에 저장
+     *
+     * @param dir  파일 저장 디렉토리
+     * @param file MultipartFile
+     */
     @Override
     @Transactional
+    public void saveFileData(String dir, MultipartFile file) {
+        UUID uuid = UUID.randomUUID();
+        String fileKey = uuid.toString();
+        String filePath = FileUtil.buildFilePath(dir, file.getOriginalFilename());
+        AttachFile attachFile = AttachFile.builder()
+                .fileName(file.getOriginalFilename())
+                .fileDir(dir)
+                .createdAt(LocalDateTime.now())
+                .fileKey(fileKey)
+                .filePath(String.format("%s/%s/%s", this.endpoint, this.bucket, filePath))
+                .build();
+        fileRepository.save(attachFile);
+    }
+
+    @Override
     public void uploadFile(MultipartFile file, String dir) {
         String objectName = dir + "/" + file.getOriginalFilename();
         try {
@@ -36,24 +70,41 @@ public class AttachFileServiceImpl implements AttachFileService {
                             .build()
             );
 
-           // return "File uploaded successfully: " + file.getOriginalFilename();
+            // return "File uploaded successfully: " + file.getOriginalFilename();
         } catch (Exception e) {
             throw new RuntimeException("Error uploading file: " + e.getMessage());
         }
     }
 
     @Override
-    public void uploadFiles(List<MultipartFile> files) {
-
+    public void uploadFiles(List<MultipartFile> files, String dir) {
+        files.forEach(file -> this.uploadFile(file, dir));
     }
 
     @Override
-    public void updateFile(MultipartFile file, AttachFile attachFile) {
-
+    public AttachFileDto.Response updateFile(MultipartFile file, Long fileId) {
+        AttachFile attachFile = fileRepository.findById(fileId)
+                .orElseThrow(() -> new EntityNotFoundException("파일 데이터가 DB에 없네요."));
+        this.uploadFile(file, attachFile.getFileDir());
+        this.removeFile(attachFile.getId());
+        return attachFile.toDto();
     }
 
     @Override
-    public void removeFile(AttachFile attachFile) {
+    public void removeFile(Long fileId) {
+        AttachFile file = fileRepository.findById(fileId)
+                .orElseThrow(() -> new EntityNotFoundException("파일 데이터가 DB에 없네요."));
+        try {
+            minioClient.removeObject(
+                    RemoveObjectArgs.builder()
+                            .bucket(this.bucket)
+                            .object(file.getFilePath())
+                            .build()
+            );
+        } catch (Exception e) {
+            throw new RuntimeException("Error deleting file: " + e.getMessage());
+        }
 
+        fileRepository.deleteById(fileId);
     }
 }

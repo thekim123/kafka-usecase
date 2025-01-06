@@ -3,6 +3,7 @@ package com.namusd.jwtredis.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.namusd.jwtredis.model.dto.ConvertDto;
+import com.namusd.jwtredis.util.ParseUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -38,13 +39,12 @@ public class ConvertServiceImpl implements ConvertService {
 
         // 요청 메시지 전송
         try {
-            kafkaTemplate.send("video-processing-requests", requestId, toJson(updatedRequest));
+            kafkaTemplate.send("video-processing-requests", requestId, ParseUtil.toJson(updatedRequest));
             log.info("$$$$$$ Sent video processing request: {}", updatedRequest);
         } catch (Exception e) {
             log.error("$$$$$$ Error sending Kafka message", e);
             throw new RuntimeException("$$$$$$ Error sending Kafka message", e);
         }
-
 
         try {
             // 응답 대기 (90초 타임아웃)
@@ -62,7 +62,7 @@ public class ConvertServiceImpl implements ConvertService {
 
     @KafkaListener(topics = "video-processing-response", groupId = "video-processing-gruop")
     public void handleResponse(String message) {
-        ConvertDto.Response response = fromJson(message, ConvertDto.Response.class);
+        ConvertDto.Response response = ParseUtil.fromJson(message, ConvertDto.Response.class);
         CompletableFuture<ConvertDto.Response> future = responseFutures.get(response.getRequestId());
 
         if (future != null) {
@@ -74,22 +74,5 @@ public class ConvertServiceImpl implements ConvertService {
     }
 
 
-    // Helper 메서드: 객체를 JSON 문자열로 변환
-    private String toJson(Object object) {
-        try {
-            return new ObjectMapper().writeValueAsString(object);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Failed to convert object to JSON", e);
-        }
-    }
-
-    // Helper 메서드: JSON 문자열을 객체로 변환
-    private <T> T fromJson(String json, Class<T> clazz) {
-        try {
-            return new ObjectMapper().readValue(json, clazz);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Failed to convert JSON to object", e);
-        }
-    }
 
 }

@@ -11,7 +11,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 @Builder
-@TableName(value = "User")
+@TableName(value = "user")
 public class User {
     @TableId(value = "id", type = IdType.AUTO) // AUTO_INCREMENT 사용
     private Long id;
