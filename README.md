@@ -107,6 +107,10 @@ remove: 삭제
 ```
 docker-compose up --build -d
 ```
+또는
+```shell
+docker-compose build spring-app
+```
 
 일반 *``up -d``*옵션 사용하면 새롭게 빌드된 jar 파일을 사용하지 않고, 
 
