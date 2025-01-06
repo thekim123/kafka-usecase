@@ -3,8 +3,10 @@ package com.namusd.jwtredis.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.namusd.jwtredis.model.dto.ConvertDto;
+import io.minio.MinioClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -24,12 +26,14 @@ public class ConvertServiceImpl implements ConvertService {
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final Map<String, CompletableFuture<ConvertDto.Response>> responseFutures = new ConcurrentHashMap<>();  // 요청 ID와 CompletableFuture를 매핑하여 응답을 처리
 
+    @Value("${spring.minio.bucket}")
+    private String bucket;
 
     @Override
     public ConvertDto.Response sendUrlAndGetProcessedUrl(ConvertDto.Request request) {
         String requestId = UUID.randomUUID().toString();    // 고유 요청 ID 생성
         String operation = "split";
-        ConvertDto.Request updatedRequest = ConvertDto.Request.createWithRequestId(request.getUrl(), requestId);
+        ConvertDto.Request updatedRequest = ConvertDto.Request.createWithRequestId(request.getUrl(), requestId, bucket);
 
         // CompletableFuture로 비동기 응답 처리
         CompletableFuture<ConvertDto.Response> future = new CompletableFuture<>();
@@ -46,8 +50,8 @@ public class ConvertServiceImpl implements ConvertService {
         }
 
 
+        // 응답 대기 (90초 타임아웃)
         try {
-            // 응답 대기 (90초 타임아웃)
             return future.get(90, TimeUnit.SECONDS);
         }catch (TimeoutException e) {
             throw new RuntimeException("Response timed out");
