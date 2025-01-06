@@ -24,23 +24,12 @@ public class VideoProcessingController {
     private final AttachFileService fileService;
     private final AssembleFrameService assembleService;
 
-//    @GetMapping("/di/{videoId}")
-//    public ResponseEntity<ConvertDto.ConvertResponse> getVideoWithFrames(@PathVariable String videoId) {
-//
-//        return new ResponseEntity<>(ConvertDto.convertResponse, HttpStatus.OK);
-//    }
-
 
     @PostMapping("/di")
     public ResponseEntity<ConvertDto.Response> convertVideo(@RequestBody ConvertDto.Request request) {
         ConvertDto.Response response = convertService.sendUrlAndGetProcessedUrl(request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
-//    @PostMapping("/di")
-//    public ResponseEntity<Void> convertVideo(@RequestBody ConvertDto convertDto) {
-//        return ResponseEntity.status(HttpStatus.CREATED).build();
-//    }
 
 
     /**

@@ -3,7 +3,6 @@ package com.namusd.jwtredis.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.namusd.jwtredis.model.dto.ConvertDto;
-import io.minio.MinioClient;
 import com.namusd.jwtredis.util.ParseUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +33,7 @@ public class ConvertServiceImpl implements ConvertService {
     public ConvertDto.Response sendUrlAndGetProcessedUrl(ConvertDto.Request request) {
         String requestId = UUID.randomUUID().toString();    // 고유 요청 ID 생성
         String operation = "split";
-        ConvertDto.Request updatedRequest = ConvertDto.Request.createWithRequestId(request.getUrl(), requestId);
+        ConvertDto.Request updatedRequest = ConvertDto.Request.createWithRequestId(request.getUrl(), requestId, bucket);
 
         // CompletableFuture로 비동기 응답 처리
         CompletableFuture<ConvertDto.Response> future = new CompletableFuture<>();
@@ -50,8 +49,8 @@ public class ConvertServiceImpl implements ConvertService {
             throw new RuntimeException("$$$$$$ Error sending Kafka message", e);
         }
 
+        // 응답 대기 (90초 타임아웃)
         try {
-            // 응답 대기 (90초 타임아웃)
             return future.get(90, TimeUnit.SECONDS);
         }catch (TimeoutException e) {
             throw new RuntimeException("Response timed out");
