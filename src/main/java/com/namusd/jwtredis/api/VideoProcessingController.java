@@ -24,36 +24,21 @@ public class VideoProcessingController {
     private final AttachFileService fileService;
     private final AssembleFrameService assembleService;
 
-//    @GetMapping("/di/{videoId}")
-//    public ResponseEntity<ConvertDto.ConvertResponse> getVideoWithFrames(@PathVariable String videoId) {
-//
-//        return new ResponseEntity<>(ConvertDto.convertResponse, HttpStatus.OK);
-//    }
-
-
     @PostMapping("/di")
     public ResponseEntity<ConvertDto.Response> convertVideo(@RequestBody ConvertDto.Request request) {
         ConvertDto.Response response = convertService.sendUrlAndGetProcessedUrl(request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-//    @PostMapping("/di")
-//    public ResponseEntity<Void> convertVideo(@RequestBody ConvertDto convertDto) {
-//        return ResponseEntity.status(HttpStatus.CREATED).build();
-//    }
-
-
-    /**
-     * 파일을 '수정'함에도 Post를 쓰는 이유는
-     * HTTP PUT은 일반적으로 application/json과 같은 구조화된 데이터 전송에 사용되며,
-     * 파일 업로드는 POST가 더 적합하기 때문.
-     * @param request
-     * @return
-     */
-    @PostMapping(value = "/frame", consumes = {"multipart/form-data"})
+    @PostMapping(value = "/frame/update", consumes = {"multipart/form-data"})
     public ResponseEntity<?> updateFrame(@ModelAttribute FrameUpdateDto.PutRequest request) {
-        AttachFileDto.Response dto = fileService.updateFile(request.getFile(), request.getId());
-        assembleService.assembleFrame(dto);
+        fileService.updateFile(request.getFile(), request.getId());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping(value = "/frame/assemble/{fileDir}")
+    public ResponseEntity<?> assembleFrame(@PathVariable String fileDir) {
+        assembleService.assembleFrame(fileDir);
         return ResponseEntity.ok().build();
     }
 

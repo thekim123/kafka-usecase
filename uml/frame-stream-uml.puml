@@ -1,0 +1,32 @@
+@startuml
+title WebSocket-Based Image Streaming System
+
+' WebSocket Endpoint
+class VideoStreamSocket {
+    + onOpen(Session session)
+    + onMessage(String message, Session session)
+    + onClose(Session session)
+    + onError(Session session, Throwable throwable)
+}
+
+' FrameStreamer Class
+class FrameStreamer {
+    + streamFrames(FrameRequest request, Session session)
+    - sendMessage(Session session, String message)
+}
+
+' FrameRequest Class
+class FrameRequest {
+    - int start
+    - int end
+    + getStart()
+    + getEnd()
+    + setStart(int start)
+    + setEnd(int end)
+}
+
+' Relationships
+VideoStreamSocket "1" --> "1" FrameStreamer : uses
+VideoStreamSocket "1" --> "*" FrameRequest : parses
+
+@enduml

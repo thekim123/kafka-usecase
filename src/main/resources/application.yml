@@ -26,6 +26,8 @@ spring:
       group-id: video-processing-group
       auto-offset-reset: earliest
     producer:
+      acks: all  # 모든 리더 및 팔로워가 메시지를 확인해야 함
+      retries: 3
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
     properties:

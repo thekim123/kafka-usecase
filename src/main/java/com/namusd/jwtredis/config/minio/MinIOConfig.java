@@ -13,7 +13,6 @@ public class MinIOConfig {
 
     @Bean
     public MinioClient minioClient() {
-        System.out.println("minio-endpoint: "+env.getProperty("spring.minio.endpoint", "http://localhost:9000"));
         return MinioClient.builder()
                 .endpoint(env.getProperty("spring.minio.endpoint", "http://localhost:9000"))
                 .credentials(
