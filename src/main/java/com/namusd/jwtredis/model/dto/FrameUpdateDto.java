@@ -1,11 +1,8 @@
 package com.namusd.jwtredis.model.dto;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
 
 public class FrameUpdateDto {
 

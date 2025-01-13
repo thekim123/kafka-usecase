@@ -34,7 +34,7 @@ public class ConvertServiceImpl implements ConvertService {
     public ConvertDto.Response sendUrlAndGetProcessedUrl(ConvertDto.Request request) {
         String requestId = UUID.randomUUID().toString();    // 고유 요청 ID 생성
         String operation = "split";
-        ConvertDto.Request updatedRequest = ConvertDto.Request.createWithRequestId(request.getUrl(), requestId);
+        ConvertDto.Request updatedRequest = ConvertDto.Request.createWithRequestId(request.getUrl(), requestId, bucket);
 
         // CompletableFuture로 비동기 응답 처리
         CompletableFuture<ConvertDto.Response> future = new CompletableFuture<>();

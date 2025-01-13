@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,7 +30,7 @@ public class AttachFileServiceImpl implements AttachFileService {
     @Value("${spring.minio.bucket}")
     private String bucket;
 
-    @Value("spring.minio.endpoint")
+    @Value("${spring.minio.endpoint}")
     private String endpoint;
 
     /**
@@ -63,7 +62,7 @@ public class AttachFileServiceImpl implements AttachFileService {
         try {
             minioClient.putObject(
                     PutObjectArgs.builder()
-                            .bucket(bucket)
+                            .bucket(this.bucket)
                             .object(objectName)
                             .stream(file.getInputStream(), file.getSize(), -1)
                             .contentType(file.getContentType())
@@ -82,29 +81,38 @@ public class AttachFileServiceImpl implements AttachFileService {
     }
 
     @Override
-    public AttachFileDto.Response updateFile(MultipartFile file, Long fileId) {
+    public void updateFile(MultipartFile file, Long fileId) {
         AttachFile attachFile = fileRepository.findById(fileId)
                 .orElseThrow(() -> new EntityNotFoundException("파일 데이터가 DB에 없네요."));
+        this.removeFile("/"+attachFile.getFileDir() + "/" + attachFile.getFileName());
+        String filePath = FileUtil.buildFilePath(attachFile.getFileDir(), file.getOriginalFilename());
+        filePath = String.format("%s/%s/%s", this.endpoint, this.bucket, filePath);
+        attachFile.changeFile(file, filePath);
         this.uploadFile(file, attachFile.getFileDir());
-        this.removeFile(attachFile.getId());
-        return attachFile.toDto();
+        fileRepository.save(attachFile);
     }
 
     @Override
-    public void removeFile(Long fileId) {
-        AttachFile file = fileRepository.findById(fileId)
-                .orElseThrow(() -> new EntityNotFoundException("파일 데이터가 DB에 없네요."));
+    public void removeFile(String filePath) {
         try {
             minioClient.removeObject(
                     RemoveObjectArgs.builder()
                             .bucket(this.bucket)
-                            .object(file.getFilePath())
+                            .object(filePath)
                             .build()
             );
         } catch (Exception e) {
             throw new RuntimeException("Error deleting file: " + e.getMessage());
         }
 
+    }
+
+    @Transactional
+    public void deleteFileData(Long fileId) {
+        AttachFile file = fileRepository.findById(fileId)
+                .orElseThrow(() -> new EntityNotFoundException("파일 데이터가 DB에 없어요"));
+        this.removeFile("/"+file.getFileDir() + "/" + file.getFileName());
         fileRepository.deleteById(fileId);
     }
+
 }

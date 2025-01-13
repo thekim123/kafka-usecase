@@ -8,6 +8,7 @@ import com.namusd.jwtredis.model.dto.AttachFileDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 
@@ -35,5 +36,10 @@ public class AttachFile {
                 .createdAt(this.createdAt)
                 .updatedAt(this.updatedAt)
                 .build();
+    }
+
+    public void changeFile(MultipartFile file, String filePath) {
+        this.fileName = file.getOriginalFilename();
+        this.filePath = filePath;
     }
 }

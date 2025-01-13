@@ -1,10 +1,8 @@
 package com.namusd.jwtredis.api;
 
-import com.namusd.jwtredis.model.entity.AttachFile;
 import com.namusd.jwtredis.service.AttachFileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -52,7 +50,7 @@ public class AttachFileController {
 
     @DeleteMapping("/{fileId}")
     public ResponseEntity<?> deleteFile(@PathVariable Long fileId) {
-        attachFileService.removeFile(fileId);
+        attachFileService.deleteFileData(fileId);
         return ResponseEntity.noContent().build();
     }
 
