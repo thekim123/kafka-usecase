@@ -1,9 +1,9 @@
-package com.namusd.jwtredis.config.socket;
+package com.namusd.jwtredis.model.dto;
 
 import lombok.Data;
 
 @Data
-public class FrameRequest {
+public class FrameRequestDto {
     private int start;
     private int end;
 }

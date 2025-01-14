@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+</head>
+<body>
+
+<h1>TEST</h1>
+<img id="frame-stream" src="">
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script th:inline="javascript">
+    const socket = new SockJS('/ws');
+    const stompClient = Stomp.over(socket);
+
+    stompClient.heartbeat.outgoing = 0; //Rabbit에선 heartbeat 안먹힌다고 함
+    stompClient.heartbeat.incoming = 0; //Rabbit에선 heartbeat 안먹힌다고 함
+
+    stompClient.connect({}, function () {
+        console.log('connect!! success!!');
+        requestFrame(1, 10);
+        subscribeFrameTopic();
+    });
+
+    function requestFrame(start, end) {
+        const data = {
+            start: start,
+            end: end
+        };
+        stompClient.send('/app/frames/request', {}, JSON.stringify(data));
+    }
+
+    function subscribeFrameTopic() {
+        stompClient.subscribe('/topic/frames', function (message) {
+            const base64Data = message.body; // Base64 데이터
+            showImage(base64Data); // 이미지를 표시하는 함수 호출
+        });
+    }
+
+    function showImage(base64Data) {
+        const img = document.getElementById('frame-stream');
+        // img.src = `data:image/jpeg;base64,${base64Data}`; // Base64 데이터를 img 태그의 src에 설정
+        const byteCharacters = atob(base64Data); // Base64 디코딩
+        const byteNumbers = new Array(byteCharacters.length).fill().map((_, i) => byteCharacters.charCodeAt(i));
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], {type: 'image/jpeg'});
+        img.src = URL.createObjectURL(blob); // Blob URL 생성
+    }
+</script>
+</body>
+</html>

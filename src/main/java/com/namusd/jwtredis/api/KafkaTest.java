@@ -21,4 +21,5 @@ public class KafkaTest {
     public void listen(String message) {
         System.out.println("Received message: " + message);
     }
+
 }

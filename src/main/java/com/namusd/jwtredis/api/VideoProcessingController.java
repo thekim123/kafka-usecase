@@ -1,6 +1,5 @@
 package com.namusd.jwtredis.api;
 
-import com.namusd.jwtredis.model.dto.AttachFileDto;
 import com.namusd.jwtredis.model.dto.ConvertDto;
 import com.namusd.jwtredis.model.dto.FrameUpdateDto;
 import com.namusd.jwtredis.service.AssembleFrameService;
