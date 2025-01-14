@@ -21,7 +21,6 @@ public class FrameSocketHandler {
 
     @MessageMapping("frames/request") // 클라이언트가 "/app/frames/request"로 요청
     public void streamFrames(@RequestBody FrameRequestDto request) {
-        log.info("stream frames is called! \nrequest: {}", request.toString());
         int start = request.getStart();
         int end = request.getEnd();
 

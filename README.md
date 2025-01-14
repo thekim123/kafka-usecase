@@ -67,6 +67,47 @@ CREATE TABLE attach_file (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='첨부 파일 테이블';
 ```
 
+### 4) video
+```sql
+CREATE TABLE video (
+   video_id VARCHAR(36) PRIMARY KEY, -- UUID를 저장하기 위한 VARCHAR(36) 타입
+   video_title VARCHAR(255) NOT NULL, -- 제목을 저장할 VARCHAR 타입, 길이는 255로 설정
+    owner_id INT NOT NULL
+);
+```
+
+```sql
+CREATE TABLE edited_frame (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY, -- 고유 ID (자동 증가)
+  video_id VARCHAR(36) NOT NULL,        -- 관련 비디오의 UUID
+  sequence INT NOT NULL,                -- 프레임 시퀀스 번호
+  edit_id BIGINT NOT NULL,              -- 편집 작업 ID
+  edit_file_id BIGINT NOT NULL,         -- 편집된 프레임의 파일 ID (외부 저장소의 파일 참조)
+  FOREIGN KEY (video_id) REFERENCES video(video_id) -- video 테이블과 관계 설정
+);
+
+```
+
+```sql
+CREATE TABLE original_frame (
+    video_id VARCHAR(36) NOT NULL,        -- 관련 비디오의 UUID
+    sequence INT NOT NULL,                -- 프레임 시퀀스 번호
+    frame_file_id BIGINT NOT NULL,        -- 원본 프레임 파일 ID (외부 저장소의 파일 참조)
+    PRIMARY KEY (video_id, sequence),     -- 비디오 ID와 시퀀스를 복합 키로 설정
+    FOREIGN KEY (video_id) REFERENCES video(video_id) -- video 테이블과 관계 설정
+);
+
+```
+
+```sql
+CREATE TABLE video_edit (
+    id INT AUTO_INCREMENT PRIMARY KEY,   -- 고유 ID (자동 증가)
+    video_id VARCHAR(36) NOT NULL,       -- 관련 비디오의 UUID
+    edit_title VARCHAR(255) NOT NULL,    -- 편집 작업 제목
+    FOREIGN KEY (video_id) REFERENCES video(video_id) -- video 테이블과 관계 설정
+);
+```
+
 ## 3. redis 디버깅
 - RBook 설치
 ```shell

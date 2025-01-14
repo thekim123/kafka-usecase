@@ -14,8 +14,8 @@ public class FrameUpdateDto {
     @Builder
     @Data
     public static class PutRequest {
-        MultipartFile file;
-        Long id;
+        private MultipartFile file;
+        private Long id;
     }
 
 

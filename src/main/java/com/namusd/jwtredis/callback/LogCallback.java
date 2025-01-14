@@ -1,4 +1,4 @@
-package com.namusd.jwtredis.config.kafka;
+package com.namusd.jwtredis.callback;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.concurrent.ListenableFutureCallback;

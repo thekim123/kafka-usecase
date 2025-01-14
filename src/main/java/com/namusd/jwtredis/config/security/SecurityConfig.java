@@ -2,7 +2,6 @@ package com.namusd.jwtredis.config.security;
 
 import com.namusd.jwtredis.facade.JwtFacade;
 import com.namusd.jwtredis.persistence.repository.UserRepository;
-import com.namusd.jwtredis.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

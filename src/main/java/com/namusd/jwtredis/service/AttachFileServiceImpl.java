@@ -42,7 +42,7 @@ public class AttachFileServiceImpl implements AttachFileService {
      */
     @Override
     @Transactional
-    public void saveFileData(String dir, MultipartFile file) {
+    public AttachFile saveFileData(String dir, MultipartFile file) {
         UUID uuid = UUID.randomUUID();
         String fileKey = uuid.toString();
         String filePath = FileUtil.buildFilePath(dir, file.getOriginalFilename());
@@ -53,7 +53,7 @@ public class AttachFileServiceImpl implements AttachFileService {
                 .fileKey(fileKey)
                 .filePath(String.format("%s/%s/%s", this.endpoint, this.bucket, filePath))
                 .build();
-        fileRepository.save(attachFile);
+        return fileRepository.save(attachFile);
     }
 
     @Override
@@ -84,7 +84,7 @@ public class AttachFileServiceImpl implements AttachFileService {
     public void updateFile(MultipartFile file, Long fileId) {
         AttachFile attachFile = fileRepository.findById(fileId)
                 .orElseThrow(() -> new EntityNotFoundException("파일 데이터가 DB에 없네요."));
-        this.removeFile("/"+attachFile.getFileDir() + "/" + attachFile.getFileName());
+        this.removeFile("/" + attachFile.getFileDir() + "/" + attachFile.getFileName());
         String filePath = FileUtil.buildFilePath(attachFile.getFileDir(), file.getOriginalFilename());
         filePath = String.format("%s/%s/%s", this.endpoint, this.bucket, filePath);
         attachFile.changeFile(file, filePath);
@@ -111,7 +111,7 @@ public class AttachFileServiceImpl implements AttachFileService {
     public void deleteFileData(Long fileId) {
         AttachFile file = fileRepository.findById(fileId)
                 .orElseThrow(() -> new EntityNotFoundException("파일 데이터가 DB에 없어요"));
-        this.removeFile("/"+file.getFileDir() + "/" + file.getFileName());
+        this.removeFile("/" + file.getFileDir() + "/" + file.getFileName());
         fileRepository.deleteById(fileId);
     }
 

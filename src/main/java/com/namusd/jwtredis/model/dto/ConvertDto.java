@@ -1,5 +1,6 @@
 package com.namusd.jwtredis.model.dto;
 
+import com.namusd.jwtredis.model.constant.ConvertOperation;
 import com.namusd.jwtredis.model.entity.Board;
 import lombok.*;
 
@@ -23,7 +24,7 @@ public class ConvertDto {
         public static Request createWithRequestId(String url, String requestId, String bucket) {
             return Request.builder()
                     .url(url)
-                    .operation("split")
+                    .operation(ConvertOperation.SPLIT.getValue())
                     .requestId(requestId)
                     .bucket(bucket)
                     .build();

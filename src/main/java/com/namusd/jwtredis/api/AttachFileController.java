@@ -1,5 +1,6 @@
 package com.namusd.jwtredis.api;
 
+import com.namusd.jwtredis.model.entity.AttachFile;
 import com.namusd.jwtredis.service.AttachFileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +29,8 @@ public class AttachFileController {
     public ResponseEntity<?> uploadFile(@PathVariable String dir, @RequestParam("file") MultipartFile file) {
         attachFileService.saveFileData(dir, file);
         attachFileService.uploadFile(file, dir);
-        return ResponseEntity.created(URI.create("asdf")).build();
+        URI location = URI.create("/api/attach/" + dir);
+        return ResponseEntity.created(location).build();
     }
 
     /**
