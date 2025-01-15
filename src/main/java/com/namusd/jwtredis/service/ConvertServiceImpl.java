@@ -63,18 +63,18 @@ public class ConvertServiceImpl implements ConvertService {
     }
 
 
-    @KafkaListener(topics = "video-processing-response", groupId = "video-processing-gruop")
-    public void handleResponse(String message) {
-        ConvertDto.Response response = ParseUtil.fromJson(message, ConvertDto.Response.class);
-        CompletableFuture<ConvertDto.Response> future = responseFutures.get(response.getRequestId());
-
-        if (future != null) {
-            future.complete(response);  // 응답 전달
-            log.info("$$$$$$ Received video processing response: {}", response);
-        } else {
-            log.warn("$$$$$$ No matching request for response: {}", response);
-        }
-    }
+//    @KafkaListener(topics = "video-processing-response", groupId = "video-processing-gruop")
+//    public void handleResponse(String message) {
+//        ConvertDto.Response response = ParseUtil.fromJson(message, ConvertDto.Response.class);
+//        CompletableFuture<ConvertDto.Response> future = responseFutures.get(response.getRequestId());
+//
+//        if (future != null) {
+//            future.complete(response);  // 응답 전달
+//            log.info("$$$$$$ Received video processing response: {}", response);
+//        } else {
+//            log.warn("$$$$$$ No matching request for response: {}", response);
+//        }
+//    }
 
 
     // Helper 메서드: 객체를 JSON 문자열로 변환

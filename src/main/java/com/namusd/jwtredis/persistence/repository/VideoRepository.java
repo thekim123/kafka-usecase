@@ -20,7 +20,8 @@ public class VideoRepository {
 
     @SuppressWarnings("UnusedReturnValue")
     public Video save(Video video) {
-        if (video.getVideoId() == null) {
+        Video existVideo = videoMapper.selectById(video.getVideoId());
+        if (existVideo == null) {
             videoMapper.insert(video);
         } else {
             videoMapper.updateById(video);

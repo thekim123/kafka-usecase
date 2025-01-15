@@ -72,7 +72,8 @@ CREATE TABLE attach_file (
 CREATE TABLE video (
    video_id VARCHAR(36) PRIMARY KEY, -- UUID를 저장하기 위한 VARCHAR(36) 타입
    video_title VARCHAR(255) NOT NULL, -- 제목을 저장할 VARCHAR 타입, 길이는 255로 설정
-    owner_id INT NOT NULL
+    owner_id INT NOT NULL,
+    video_file_id INT NOT NULL 
 );
 ```
 
@@ -90,11 +91,12 @@ CREATE TABLE edited_frame (
 
 ```sql
 CREATE TABLE original_frame (
-    video_id VARCHAR(36) NOT NULL,        -- 관련 비디오의 UUID
-    sequence INT NOT NULL,                -- 프레임 시퀀스 번호
-    frame_file_id BIGINT NOT NULL,        -- 원본 프레임 파일 ID (외부 저장소의 파일 참조)
-    PRIMARY KEY (video_id, sequence),     -- 비디오 ID와 시퀀스를 복합 키로 설정
-    FOREIGN KEY (video_id) REFERENCES video(video_id) -- video 테이블과 관계 설정
+    original_frame_id BIGINT AUTO_INCREMENT PRIMARY KEY, -- 고유 ID (자동 증가)
+    video_id VARCHAR(36) NOT NULL,                       -- 관련 비디오의 UUID
+    start_sequence INT NOT NULL,                         -- 시작 시퀀스 번호
+    end_sequence INT NOT NULL,                           -- 종료 시퀀스 번호
+    frame_file_id VARCHAR(255) NOT NULL,                 -- 원본 프레임 파일 ID (외부 저장소의 파일 참조)
+    FOREIGN KEY (video_id) REFERENCES video(video_id)    -- video 테이블과 관계 설정
 );
 
 ```

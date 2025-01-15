@@ -29,11 +29,8 @@ public class VideoFacade {
 
     @Value("${spring.minio.bucket}")
     private String bucket;
-    @Value("${spring.minio.endpoint}")
-    private String endpoint;
 
-
-    public void registerVideo(MultipartFile file, Authentication auth) {
+    public String registerVideo(MultipartFile file, Authentication auth) {
         UUID uuid = UUID.randomUUID();
         AttachFile attachFile = attachFileService.saveFileData("video/" + uuid, file);
         attachFileService.uploadFile(file, FilePathConstant.VIDEO_UPLOAD_PATH + uuid);
@@ -43,21 +40,25 @@ public class VideoFacade {
                 .attachFileId(attachFile.getId())
                 .videoFileName(file.getOriginalFilename())
                 .build();
-        videoService.insertVideo(auth, vo);
+        String videoId = videoService.insertVideo(auth, vo);
 
         ConvertDto.Request request = ConvertDto.Request.builder()
                 .bucket(this.bucket)
                 .bucket_name(bucket)
                 .operation(ConvertOperation.SPLIT.getValue())
-                .url(FileUtil.buildMinioUrl(endpoint, bucket, attachFile.getFilePath()))
+                .url(attachFile.getFilePath())
                 .requestId(vo.getVideoId())
                 .build();
 
         ProducerRecord<String, String> record
-                = new ProducerRecord<>("video-assemble-request", request.getRequestId(), ParseUtil.toJson(request));
+                = new ProducerRecord<>("video-processing-requests", request.getRequestId(), ParseUtil.toJson(request));
         var future = kafkaTemplate.send(record);
         future.addCallback(new LogCallback());
-
+        return videoId;
     }
 
+
+    public void saveFrameMetadata(ConvertDto.Response record) {
+        videoService.saveOriginalFrameData(record);
+    }
 }

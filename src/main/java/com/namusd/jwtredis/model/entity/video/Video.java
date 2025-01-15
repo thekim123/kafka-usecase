@@ -18,4 +18,5 @@ public class Video {
     private String videoId;
     private String videoTitle;
     private Long videoFileId;
+    private Long ownerId;
 }

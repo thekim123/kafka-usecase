@@ -7,11 +7,11 @@ import org.springframework.util.concurrent.ListenableFutureCallback;
 public class LogCallback implements ListenableFutureCallback<Object> {
     @Override
     public void onFailure(Throwable ex) {
-        log.warn("$$$$$$ No matching request for response: {}", ex.getMessage());
+        log.warn("fail to send request\nfail message: {}", ex.getMessage());
     }
 
     @Override
     public void onSuccess(Object result) {
-        log.info("$$$$$$ Received response: {}", result);
+        log.info("success to send request\nsend object: {}", result);
     }
 }
