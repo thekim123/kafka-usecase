@@ -30,11 +30,11 @@
             start: start,
             end: end
         };
-        stompClient.send('/app/frames/request', {}, JSON.stringify(data));
+        stompClient.send('/app/frames/request/f420e763-195c-4c2a-9663-8eb4c7c8d33d', {}, JSON.stringify(data));
     }
 
     function subscribeFrameTopic() {
-        stompClient.subscribe('/topic/frames', function (message) {
+        stompClient.subscribe('/topic/frames/f420e763-195c-4c2a-9663-8eb4c7c8d33d', function (message) {
             const base64Data = message.body; // Base64 데이터
             showImage(base64Data); // 이미지를 표시하는 함수 호출
         });

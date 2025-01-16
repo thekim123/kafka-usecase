@@ -3,6 +3,7 @@ package com.namusd.jwtredis.socket;
 import com.namusd.jwtredis.model.dto.FrameRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,8 +20,9 @@ public class FrameSocketHandler {
 
     private final SimpMessagingTemplate messagingTemplate;
 
-    @MessageMapping("frames/request") // 클라이언트가 "/app/frames/request"로 요청
-    public void streamFrames(@RequestBody FrameRequestDto request) {
+    @MessageMapping("frames/request/{videoId}") // 클라이언트가 "/app/frames/request"로 요청
+    public void streamFrames(@RequestBody FrameRequestDto request, @DestinationVariable String videoId) {
+        log.info("video id: {}", videoId);
         int start = request.getStart();
         int end = request.getEnd();
 
@@ -46,9 +48,7 @@ public class FrameSocketHandler {
                 String base64Frame = Base64.getEncoder().encodeToString(frameData);
 
                 // 주제에 프레임 전송
-                messagingTemplate.convertAndSend("/topic/frames", base64Frame);
-                // 지연 처리 (클라이언트가 동영상처럼 느끼도록)
-                Thread.sleep(100);
+                messagingTemplate.convertAndSend("/topic/frames/"+videoId, base64Frame);
             } catch (Exception e) {
                 messagingTemplate.convertAndSend("/topic/frames/error", "Error processing frame: " + i);
             }
