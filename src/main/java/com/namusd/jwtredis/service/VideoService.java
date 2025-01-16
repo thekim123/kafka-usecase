@@ -2,6 +2,8 @@ package com.namusd.jwtredis.service;
 
 import com.namusd.jwtredis.callback.LogCallback;
 import com.namusd.jwtredis.config.auth.PrincipalDetails;
+import com.namusd.jwtredis.model.domain.PageRequest;
+import com.namusd.jwtredis.model.domain.PageResult;
 import com.namusd.jwtredis.model.dto.ConvertDto;
 import com.namusd.jwtredis.model.dto.VideoDto;
 import com.namusd.jwtredis.model.entity.User;
@@ -15,10 +17,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -62,7 +69,20 @@ public class VideoService {
         originalFrameRepository.save(originalFrame);
     }
 
-    public Page<VideoDto.Response> getVideoList(Authentication auth) {
-        return null;
+    @Transactional(readOnly = true)
+    public PageResult<VideoDto.Response> getVideoList(Authentication auth, PageRequest pageRequest) {
+        User loginUser = ((PrincipalDetails) auth.getPrincipal()).getUser();
+
+        // MyBatis 매퍼 호출
+        List<Video> videos = videoRepository.findVideoPage(pageRequest, loginUser);
+        List<VideoDto.Response> dtoList = videos.stream()
+                .map(Video::toDto)
+                .toList();
+
+        // 총 데이터 개수 조회
+        int totalCount = videoRepository.countAllVideos(loginUser);
+
+        // Spring Data의 Page 객체로 변환
+        return new PageResult<>(dtoList, pageRequest, totalCount);
     }
 }

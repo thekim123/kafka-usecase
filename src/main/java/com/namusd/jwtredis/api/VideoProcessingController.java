@@ -1,6 +1,8 @@
 package com.namusd.jwtredis.api;
 
 import com.namusd.jwtredis.facade.VideoFacade;
+import com.namusd.jwtredis.model.domain.PageRequest;
+import com.namusd.jwtredis.model.domain.PageResult;
 import com.namusd.jwtredis.model.dto.VideoDto;
 import com.namusd.jwtredis.service.VideoService;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +31,18 @@ public class VideoProcessingController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<?> getVideoList(Authentication auth) {
-        Page<VideoDto.Response> videoList = videoService.getVideoList(auth);
+    public ResponseEntity<?> getVideoList(
+            Authentication auth,
+            @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+            @RequestParam(value = "size", required = false, defaultValue = "10") Integer size,
+            @RequestParam(value = "sort", required = false, defaultValue = "video_id desc") String sort
+    ) {
+        PageRequest pageRequest = PageRequest.builder()
+                .page(page)
+                .size(size)
+                .sort(sort)
+                .build();
+        PageResult<VideoDto.Response> videoList = videoService.getVideoList(auth, pageRequest);
         return ResponseEntity.ok(videoList);
     }
 
