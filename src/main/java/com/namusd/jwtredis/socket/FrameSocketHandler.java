@@ -1,6 +1,7 @@
 package com.namusd.jwtredis.socket;
 
 import com.namusd.jwtredis.model.dto.FrameRequestDto;
+import com.namusd.jwtredis.model.entity.video.FrameStreamDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -46,9 +47,14 @@ public class FrameSocketHandler {
                 byte[] frameData = inputStream.readAllBytes();
                 inputStream.close();
                 String base64Frame = Base64.getEncoder().encodeToString(frameData);
+                FrameStreamDto.Response dto = FrameStreamDto.Response.builder()
+                        .direction(request.getDirection())
+                        .base64Data(base64Frame)
+                        .sequence(i)
+                        .build();
 
                 // 주제에 프레임 전송
-                messagingTemplate.convertAndSend("/topic/frames/"+videoId, base64Frame);
+                messagingTemplate.convertAndSend("/topic/frames/" + videoId, dto);
             } catch (Exception e) {
                 messagingTemplate.convertAndSend("/topic/frames/error", "Error processing frame: " + i);
             }
