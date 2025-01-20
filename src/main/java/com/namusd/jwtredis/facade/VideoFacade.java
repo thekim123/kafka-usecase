@@ -30,23 +30,19 @@ public class VideoFacade {
     private String bucket;
 
     public String registerVideo(MultipartFile file, Authentication auth) {
-        UUID uuid = UUID.randomUUID();
-        AttachFile attachFile = attachFileService.saveFileData("video/" + uuid, file);
-        attachFileService.uploadFile(file, FilePathConstant.VIDEO_UPLOAD_PATH + uuid);
+        String videoId = videoService.insertVideo(auth, file);
 
-        VideoRegisterVo vo = VideoRegisterVo.builder()
-                .videoId(uuid.toString())
-                .attachFile(attachFile)
-                .videoFileName(file.getOriginalFilename())
-                .build();
-        String videoId = videoService.insertVideo(auth, vo);
+        AttachFile attachFile = attachFileService.saveFileData("video/" + videoId, file);
+        attachFileService.uploadFile(file, FilePathConstant.VIDEO_UPLOAD_PATH + videoId);
+
+        videoService.withVideoFile(attachFile, videoId);
 
         ConvertDto.Request request = ConvertDto.Request.builder()
                 .bucket(this.bucket)
                 .bucket_name(bucket)
                 .operation(ConvertOperation.SPLIT.getValue())
                 .url(attachFile.getFilePath())
-                .requestId(vo.videoId())
+                .requestId(videoId)
                 .build();
 
         ProducerRecord<String, String> record

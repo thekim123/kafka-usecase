@@ -41,4 +41,8 @@ public class Video {
                 .ownerId(this.owner.getId())
                 .build();
     }
+
+    public void withVideoFile(AttachFile attachFile) {
+        this.videoFile = attachFile;
+    }
 }

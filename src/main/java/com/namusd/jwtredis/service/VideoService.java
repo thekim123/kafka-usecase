@@ -4,6 +4,7 @@ import com.namusd.jwtredis.callback.LogCallback;
 import com.namusd.jwtredis.config.auth.PrincipalDetails;
 import com.namusd.jwtredis.model.dto.ConvertDto;
 import com.namusd.jwtredis.model.dto.VideoDto;
+import com.namusd.jwtredis.model.entity.AttachFile;
 import com.namusd.jwtredis.model.entity.User;
 import com.namusd.jwtredis.model.entity.video.OriginalFrame;
 import com.namusd.jwtredis.model.entity.video.Video;
@@ -21,6 +22,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Service
@@ -34,17 +36,20 @@ public class VideoService {
     private final OriginalFrameRepository originalFrameRepository;
 
     @Transactional
-    public String insertVideo(Authentication auth, VideoRegisterVo vo) {
+    public String insertVideo(Authentication auth, MultipartFile file) {
         User loginUser = ((PrincipalDetails) auth.getPrincipal()).getUser();
-
-
         Video video = Video.builder()
-                .videoTitle(vo.videoFileName())
-                .videoFile(vo.attachFile())
+                .videoTitle(file.getOriginalFilename())
                 .owner(loginUser)
                 .build();
         Video entity = videoRepository.save(video);
         return entity.getVideoId().toString();
+    }
+
+    @Transactional
+    public void withVideoFile(AttachFile attachFile, String videoId) {
+        Video video = VideoServiceHelper.findVideoById(videoId, videoRepository);
+        video.withVideoFile(attachFile);
     }
 
     public void assembleFrame(String fileDir) {
