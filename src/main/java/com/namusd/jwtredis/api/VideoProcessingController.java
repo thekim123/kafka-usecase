@@ -24,8 +24,12 @@ public class VideoProcessingController {
     private final VideoService videoService;
 
     @PostMapping(consumes = {"multipart/form-data"})
-    public ResponseEntity<?> registerVideo(Authentication auth, @RequestPart MultipartFile file) {
-        String videoId = videoFacade.registerVideo(file, auth);
+    public ResponseEntity<?> registerVideo(
+            Authentication auth,
+            @RequestPart("file") MultipartFile file,
+            @RequestPart("workTitle") String workTitle
+    ) {
+        String videoId = videoFacade.registerVideo(file, workTitle, auth);
         return ResponseEntity.created(URI.create("/api/video/single/" + videoId)).build();
     }
 

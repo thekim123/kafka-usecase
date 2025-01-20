@@ -12,5 +12,5 @@ import java.util.UUID;
 public interface VideoRepository extends JpaRepository<Video, Long> {
     Optional<Video> findByVideoId(UUID videoId);
 
-    Page<Video> findByOwner(User owner, Pageable pageable);
+    Page<Video> findByOwnerOrderByCreatedAtDesc(User owner, Pageable pageable);
 }

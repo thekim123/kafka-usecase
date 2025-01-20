@@ -29,8 +29,8 @@ public class VideoFacade {
     @Value("${spring.minio.bucket}")
     private String bucket;
 
-    public String registerVideo(MultipartFile file, Authentication auth) {
-        String videoId = videoService.insertVideo(auth, file);
+    public String registerVideo(MultipartFile file, String workTitle,Authentication auth) {
+        String videoId = videoService.insertVideo(auth, workTitle,file);
 
         AttachFile attachFile = attachFileService.saveFileData("video/" + videoId, file);
         attachFileService.uploadFile(file, FilePathConstant.VIDEO_UPLOAD_PATH + videoId);

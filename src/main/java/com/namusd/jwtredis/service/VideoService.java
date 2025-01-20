@@ -36,10 +36,11 @@ public class VideoService {
     private final OriginalFrameRepository originalFrameRepository;
 
     @Transactional
-    public String insertVideo(Authentication auth, MultipartFile file) {
+    public String insertVideo(Authentication auth, String workTitle, MultipartFile file) {
         User loginUser = ((PrincipalDetails) auth.getPrincipal()).getUser();
         Video video = Video.builder()
                 .videoTitle(file.getOriginalFilename())
+                .workTitle(workTitle)
                 .owner(loginUser)
                 .build();
         Video entity = videoRepository.save(video);
@@ -73,8 +74,7 @@ public class VideoService {
     @Transactional(readOnly = true)
     public Page<VideoDto.Response> getVideoList(Authentication auth, Pageable pageable) {
         User loginUser = ((PrincipalDetails) auth.getPrincipal()).getUser();
-
-        Page<Video> videos = videoRepository.findByOwner(loginUser, pageable);
+        Page<Video> videos = videoRepository.findByOwnerOrderByCreatedAtDesc(loginUser, pageable);
         return videos.map(Video::toDto);
     }
 }

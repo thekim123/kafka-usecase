@@ -16,5 +16,6 @@ public class VideoDto {
         private String videoTitle;
         private Long videoFileId;
         private Long ownerId;
+        private String workTitle;
     }
 }

@@ -1,6 +1,5 @@
 package com.namusd.jwtredis.listener;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.namusd.jwtredis.facade.VideoFacade;
 import com.namusd.jwtredis.model.dto.ConvertDto;
 import com.namusd.jwtredis.util.ParseUtil;
