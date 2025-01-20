@@ -28,17 +28,18 @@ public class FrameSocketHandler {
         int end = request.getEnd();
 
         // 입력 값 검증
-        if (start < 0 || end <= start) {
+        if (start < 0 || end < start) {
             messagingTemplate.convertAndSend("/topic/frames/error", "Invalid range: start=" + start + ", end=" + end);
             return;
         }
 
         // 프레임 생성 및 전송
+        InputStream inputStream;
         for (int i = start; i <= end; i++) {
             try {
                 // 프레임 파일 경로를 지정
                 String framePath = String.format("frames/frame_%04d.jpg", i);
-                InputStream inputStream = getClass().getClassLoader().getResourceAsStream(framePath);
+                inputStream = getClass().getClassLoader().getResourceAsStream(framePath);
                 if (inputStream == null) {
                     throw new FileNotFoundException("File not found: " + framePath);
                 }
