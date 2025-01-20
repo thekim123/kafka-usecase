@@ -1,5 +1,6 @@
-package com.namusd.jwtredis.model.entity.video;
+package com.namusd.jwtredis.model.dto;
 
+import com.namusd.jwtredis.model.entity.video.FrameStreamDirection;
 import lombok.*;
 
 public class FrameStreamDto {

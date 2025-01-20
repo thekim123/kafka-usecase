@@ -1,9 +1,8 @@
 package com.namusd.jwtredis.service;
 
 import com.namusd.jwtredis.handler.ex.EntityNotFoundException;
-import com.namusd.jwtredis.model.dto.AttachFileDto;
 import com.namusd.jwtredis.model.entity.AttachFile;
-import com.namusd.jwtredis.persistence.repository.AttachFileRepository;
+import com.namusd.jwtredis.repository.AttachFileRepository;
 import com.namusd.jwtredis.util.FileUtil;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -49,7 +47,6 @@ public class AttachFileServiceImpl implements AttachFileService {
         AttachFile attachFile = AttachFile.builder()
                 .fileName(file.getOriginalFilename())
                 .fileDir(dir)
-                .createdAt(LocalDateTime.now())
                 .fileKey(fileKey)
                 .filePath(String.format("%s/%s/%s", this.endpoint, this.bucket, filePath))
                 .build();

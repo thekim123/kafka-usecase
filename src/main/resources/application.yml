@@ -6,7 +6,7 @@ spring:
     name: jwt-redis
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-#    url: jdbc:mariadb://mariadb:3321/namu-jwt-test
+    #    url: jdbc:mariadb://mariadb:3321/namu-jwt-test
     url: jdbc:mariadb://localhost:3321/namu-jwt-test
     username: namu-jwt-test
     password: 1234
@@ -17,17 +17,22 @@ spring:
       max-request-size: 50MB
 
   redis:
-#    host: redis
+    #    host: redis
     host: localhost
     port: 6379
     password: 1234
 
   jpa:
     open-in-view: false
+    hibernate:
+      ddl-auto: create
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: true
 
   kafka:
     bootstrap-servers: localhost:9092
-#    bootstrap-servers: kafka:19092  # Kafka 클라이언트가 Kafka 클러스터와 연결하는 데 필요한 브로커 주소
+    #    bootstrap-servers: kafka:19092  # Kafka 클라이언트가 Kafka 클러스터와 연결하는 데 필요한 브로커 주소
     consumer:
       group-id: video-processing-group
       auto-offset-reset: earliest
@@ -40,17 +45,8 @@ spring:
       schema.registry.url: http://schema-registry:8081
 
   minio:
-#    endpoint: http://minio:9000
+    #    endpoint: http://minio:9000
     endpoint: http://localhost:9000
     accessKey: admin
     secretKey: admin123
     bucket: di-bucket
-
-mybatis:
-  mapper-locations: classpath:mapper/*.xml
-
-mybatis-plus:
-  configuration:
-    lazy-loading-enabled: true  # Lazy Loading 활성화
-    aggressive-lazy-loading: false  # 필요할 때만 로딩
-

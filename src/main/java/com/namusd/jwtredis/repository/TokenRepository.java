@@ -1,4 +1,4 @@
-package com.namusd.jwtredis.persistence.repository;
+package com.namusd.jwtredis.repository;
 
 import com.namusd.jwtredis.model.entity.RefreshToken;
 import org.springframework.data.repository.CrudRepository;

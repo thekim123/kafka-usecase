@@ -1,7 +1,7 @@
 package com.namusd.jwtredis.socket;
 
 import com.namusd.jwtredis.model.dto.FrameRequestDto;
-import com.namusd.jwtredis.model.entity.video.FrameStreamDto;
+import com.namusd.jwtredis.model.dto.FrameStreamDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;

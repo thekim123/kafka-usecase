@@ -1,18 +1,23 @@
 package com.namusd.jwtredis.model.entity.video;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
+
+import javax.persistence.*;
 
 @Getter
 @ToString
 @Builder
 @AllArgsConstructor
-@TableName("video_edit")
+@Table(name = "video_edit")
+@Entity
+@NoArgsConstructor
 public class VideoEdit {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String videoId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "video_id")
+    private Video video;
     private String editTitle;
 }

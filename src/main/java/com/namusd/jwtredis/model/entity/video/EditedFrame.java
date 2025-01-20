@@ -1,22 +1,28 @@
 package com.namusd.jwtredis.model.entity.video;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import com.namusd.jwtredis.model.entity.AttachFile;
+import lombok.*;
+
+import javax.persistence.*;
 
 @Getter
 @ToString
 @Builder
 @AllArgsConstructor
-@TableName("edited_frame")
+@NoArgsConstructor
+@Table(name = "edited_frame")
+@Entity
 public class EditedFrame {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String videoId;
     private int sequence;
 
-    private Long editId;
-    private Long editFileId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "edit_id")
+    private VideoEdit edit;
+
+    @OneToOne
+    private AttachFile editFile;
 }

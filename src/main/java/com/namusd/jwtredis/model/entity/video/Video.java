@@ -1,32 +1,41 @@
 package com.namusd.jwtredis.model.entity.video;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.namusd.jwtredis.model.dto.VideoDto;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import com.namusd.jwtredis.model.entity.AttachFile;
+import com.namusd.jwtredis.model.entity.User;
+import lombok.*;
+
+import javax.persistence.*;
+import java.util.UUID;
 
 @Getter
 @AllArgsConstructor
 @ToString
 @Builder
-@TableName("video")
+@Table(name = "video")
+@Entity
+@NoArgsConstructor
 public class Video {
-    @TableId(value = "video_id", type = IdType.ASSIGN_UUID)
-    private String videoId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "video_id")
+    private UUID videoId;
+    @Column(name = "video_title", nullable = false, length = 100)
     private String videoTitle;
-    private Long videoFileId;
-    private Long ownerId;
+
+    @OneToOne
+    private AttachFile videoFile;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id")
+    private User owner;
 
     public VideoDto.Response toDto() {
         return VideoDto.Response.builder()
-                .videoId(this.videoId)
+                .videoId(this.videoId.toString())
                 .videoTitle(this.videoTitle)
-                .videoFileId(this.videoFileId)
-                .ownerId(this.ownerId)
+                .videoFileId(this.videoFile.getId())
+                .ownerId(this.owner.getId())
                 .build();
     }
 }

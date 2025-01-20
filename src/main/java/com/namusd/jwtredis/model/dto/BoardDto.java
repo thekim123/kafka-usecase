@@ -1,6 +1,7 @@
 package com.namusd.jwtredis.model.dto;
 
 import com.namusd.jwtredis.model.entity.Board;
+import com.namusd.jwtredis.model.entity.User;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -17,11 +18,11 @@ public class BoardDto {
         private String content;
         private Long authorId;
 
-        public Board toEntity() {
+        public Board toEntity(User user) {
             return Board.builder()
                     .title(this.title)
                     .content(this.content)
-                    .authorId(this.authorId)
+                    .author(user)
                     .build();
         }
     }

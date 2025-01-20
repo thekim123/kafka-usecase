@@ -1,35 +1,35 @@
 package com.namusd.jwtredis.model.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.namusd.jwtredis.model.dto.BoardDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import javax.persistence.*;
 
 @Getter
 @AllArgsConstructor
 @Builder
-@TableName(value = "board")
-public class Board {
-    @TableId(value = "id", type = IdType.AUTO) // AUTO_INCREMENT 사용
+@Table(name = "board")
+@Entity
+@NoArgsConstructor
+public class Board extends BaseTimeEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
     private String content;
-    private Long authorId;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_id")
+    private User author;
 
     public BoardDto.Response toDto() {
         return BoardDto.Response.builder()
                 .id(this.id)
                 .content(this.content)
                 .title(this.title)
-                .createTime(this.createdAt)
-                .updateTime(this.updatedAt)
                 .build();
     }
 

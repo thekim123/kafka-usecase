@@ -5,9 +5,8 @@ import com.namusd.jwtredis.handler.ex.InvalidRefreshTokenException;
 import com.namusd.jwtredis.model.entity.RefreshToken;
 import com.namusd.jwtredis.model.entity.RefreshTokenIndex;
 import com.namusd.jwtredis.model.vo.RefreshTokenVo;
-import com.namusd.jwtredis.persistence.repository.RefreshTokenIndexRepository;
-import com.namusd.jwtredis.persistence.repository.TokenRepository;
-import com.namusd.jwtredis.util.JwtUtil;
+import com.namusd.jwtredis.repository.RefreshTokenIndexRepository;
+import com.namusd.jwtredis.repository.TokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.access.AccessDeniedException;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @RequiredArgsConstructor

@@ -1,8 +1,7 @@
 package com.namusd.jwtredis.config.security;
 
 import com.namusd.jwtredis.facade.JwtFacade;
-import com.namusd.jwtredis.persistence.repository.UserRepository;
-import com.namusd.jwtredis.service.JwtService;
+import com.namusd.jwtredis.repository.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;

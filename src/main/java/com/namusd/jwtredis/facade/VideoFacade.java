@@ -8,7 +8,6 @@ import com.namusd.jwtredis.model.entity.AttachFile;
 import com.namusd.jwtredis.model.vo.VideoRegisterVo;
 import com.namusd.jwtredis.service.AttachFileService;
 import com.namusd.jwtredis.service.VideoService;
-import com.namusd.jwtredis.util.FileUtil;
 import com.namusd.jwtredis.util.ParseUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -37,7 +36,7 @@ public class VideoFacade {
 
         VideoRegisterVo vo = VideoRegisterVo.builder()
                 .videoId(uuid.toString())
-                .attachFileId(attachFile.getId())
+                .attachFile(attachFile)
                 .videoFileName(file.getOriginalFilename())
                 .build();
         String videoId = videoService.insertVideo(auth, vo);
@@ -47,7 +46,7 @@ public class VideoFacade {
                 .bucket_name(bucket)
                 .operation(ConvertOperation.SPLIT.getValue())
                 .url(attachFile.getFilePath())
-                .requestId(vo.getVideoId())
+                .requestId(vo.videoId())
                 .build();
 
         ProducerRecord<String, String> record
