@@ -4,7 +4,7 @@ import com.namusd.jwtredis.config.auth.PrincipalDetails;
 import com.namusd.jwtredis.handler.ex.EntityNotFoundException;
 import com.namusd.jwtredis.model.dto.BoardDto;
 import com.namusd.jwtredis.model.entity.Board;
-import com.namusd.jwtredis.model.entity.User;
+import com.namusd.jwtredis.model.entity.user.User;
 import com.namusd.jwtredis.repository.BoardRepository;
 import com.namusd.jwtredis.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
 package com.namusd.jwtredis.repository;
 
-import com.namusd.jwtredis.model.entity.User;
+import com.namusd.jwtredis.model.entity.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

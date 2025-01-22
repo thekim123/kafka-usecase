@@ -1,7 +1,7 @@
 package com.namusd.jwtredis.model.dto;
 
 import com.namusd.jwtredis.model.entity.Board;
-import com.namusd.jwtredis.model.entity.User;
+import com.namusd.jwtredis.model.entity.user.User;
 import lombok.*;
 
 import java.time.LocalDateTime;

@@ -1,4 +1,4 @@
-package com.namusd.jwtredis.model.entity;
+package com.namusd.jwtredis.model.entity.auth;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;

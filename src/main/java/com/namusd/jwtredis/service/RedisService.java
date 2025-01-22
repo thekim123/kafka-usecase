@@ -2,8 +2,8 @@ package com.namusd.jwtredis.service;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.namusd.jwtredis.handler.ex.InvalidRefreshTokenException;
-import com.namusd.jwtredis.model.entity.RefreshToken;
-import com.namusd.jwtredis.model.entity.RefreshTokenIndex;
+import com.namusd.jwtredis.model.entity.auth.RefreshToken;
+import com.namusd.jwtredis.model.entity.auth.RefreshTokenIndex;
 import com.namusd.jwtredis.model.vo.RefreshTokenVo;
 import com.namusd.jwtredis.repository.RefreshTokenIndexRepository;
 import com.namusd.jwtredis.repository.TokenRepository;

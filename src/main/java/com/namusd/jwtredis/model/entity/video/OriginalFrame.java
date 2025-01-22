@@ -1,5 +1,6 @@
 package com.namusd.jwtredis.model.entity.video;
 
+import com.namusd.jwtredis.model.dto.video.OriginalFrameDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -17,10 +18,17 @@ public class OriginalFrame {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "video_id")
     private Video video;
 
     private int startSequence;
     private int endSequence;
+
+    public OriginalFrameDto.Response toDto() {
+        return OriginalFrameDto.Response.builder()
+                .endSequence(this.endSequence)
+                .startSequence(this.startSequence)
+                .build();
+    }
 }

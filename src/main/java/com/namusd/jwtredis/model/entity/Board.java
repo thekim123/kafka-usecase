@@ -1,6 +1,7 @@
 package com.namusd.jwtredis.model.entity;
 
 import com.namusd.jwtredis.model.dto.BoardDto;
+import com.namusd.jwtredis.model.entity.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

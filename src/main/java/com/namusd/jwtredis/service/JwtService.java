@@ -5,12 +5,11 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.namusd.jwtredis.model.constant.JwtProperties;
-import com.namusd.jwtredis.model.entity.User;
+import com.namusd.jwtredis.model.entity.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor

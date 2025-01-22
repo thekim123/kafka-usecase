@@ -3,9 +3,8 @@ package com.namusd.jwtredis.facade;
 import com.namusd.jwtredis.callback.LogCallback;
 import com.namusd.jwtredis.model.constant.ConvertOperation;
 import com.namusd.jwtredis.model.constant.FilePathConstant;
-import com.namusd.jwtredis.model.dto.ConvertDto;
+import com.namusd.jwtredis.model.dto.video.ConvertDto;
 import com.namusd.jwtredis.model.entity.AttachFile;
-import com.namusd.jwtredis.model.vo.VideoRegisterVo;
 import com.namusd.jwtredis.service.AttachFileService;
 import com.namusd.jwtredis.service.VideoService;
 import com.namusd.jwtredis.util.ParseUtil;
@@ -16,8 +15,6 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor

@@ -2,13 +2,13 @@ package com.namusd.jwtredis.service;
 
 import com.namusd.jwtredis.callback.LogCallback;
 import com.namusd.jwtredis.config.auth.PrincipalDetails;
-import com.namusd.jwtredis.model.dto.ConvertDto;
-import com.namusd.jwtredis.model.dto.VideoDto;
+import com.namusd.jwtredis.handler.ex.EntityNotFoundException;
+import com.namusd.jwtredis.model.dto.video.ConvertDto;
+import com.namusd.jwtredis.model.dto.video.VideoDto;
 import com.namusd.jwtredis.model.entity.AttachFile;
-import com.namusd.jwtredis.model.entity.User;
+import com.namusd.jwtredis.model.entity.user.User;
 import com.namusd.jwtredis.model.entity.video.OriginalFrame;
 import com.namusd.jwtredis.model.entity.video.Video;
-import com.namusd.jwtredis.model.vo.VideoRegisterVo;
 import com.namusd.jwtredis.repository.OriginalFrameRepository;
 import com.namusd.jwtredis.repository.VideoRepository;
 import com.namusd.jwtredis.service.helper.VideoServiceHelper;
@@ -23,6 +23,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.UUID;
 
 
 @Service
@@ -69,6 +71,7 @@ public class VideoService {
                 .video(video)
                 .build();
         originalFrameRepository.save(originalFrame);
+        video.withOriginalFrame(originalFrame);
     }
 
     @Transactional(readOnly = true)
@@ -76,5 +79,12 @@ public class VideoService {
         User loginUser = ((PrincipalDetails) auth.getPrincipal()).getUser();
         Page<Video> videos = videoRepository.findByOwnerOrderByCreatedAtDesc(loginUser, pageable);
         return videos.map(Video::toDto);
+    }
+
+    @Transactional(readOnly = true)
+    public VideoDto.Detail getVideoDetail(Authentication auth, String videoId) {
+        Video video = videoRepository.findVideoDetail(UUID.fromString(videoId))
+                .orElseThrow(() -> new EntityNotFoundException("없어"));
+        return video.toDetail();
     }
 }

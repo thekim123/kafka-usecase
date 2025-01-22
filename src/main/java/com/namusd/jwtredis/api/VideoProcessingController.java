@@ -1,7 +1,7 @@
 package com.namusd.jwtredis.api;
 
 import com.namusd.jwtredis.facade.VideoFacade;
-import com.namusd.jwtredis.model.dto.VideoDto;
+import com.namusd.jwtredis.model.dto.video.VideoDto;
 import com.namusd.jwtredis.service.VideoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,10 +42,10 @@ public class VideoProcessingController {
         return ResponseEntity.ok(videoList);
     }
 
-    @GetMapping("/single/{videoId}")
-    public ResponseEntity<?> getSingleVideo(Authentication auth, @PathVariable("videoId") String videoId) {
-
-        return ResponseEntity.ok(null);
+    @GetMapping("/detail/{videoId}")
+    public ResponseEntity<?> getVideoDetail(Authentication auth, @PathVariable("videoId") String videoId) {
+        VideoDto.Detail detail = videoService.getVideoDetail(auth, videoId);
+        return ResponseEntity.ok(detail);
     }
 
 }

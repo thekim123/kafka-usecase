@@ -1,7 +1,7 @@
 package com.namusd.jwtredis.listener;
 
 import com.namusd.jwtredis.facade.VideoFacade;
-import com.namusd.jwtredis.model.dto.ConvertDto;
+import com.namusd.jwtredis.model.dto.video.ConvertDto;
 import com.namusd.jwtredis.util.ParseUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerRecord;

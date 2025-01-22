@@ -1,4 +1,4 @@
-package com.namusd.jwtredis.model.dto;
+package com.namusd.jwtredis.model.dto.video;
 
 import com.namusd.jwtredis.model.constant.ConvertOperation;
 import lombok.*;

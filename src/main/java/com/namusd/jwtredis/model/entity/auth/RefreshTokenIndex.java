@@ -1,4 +1,4 @@
-package com.namusd.jwtredis.model.entity;
+package com.namusd.jwtredis.model.entity.auth;
 
 import com.namusd.jwtredis.model.constant.JwtProperties;
 import lombok.*;

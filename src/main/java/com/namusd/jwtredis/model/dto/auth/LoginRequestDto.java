@@ -1,4 +1,4 @@
-package com.namusd.jwtredis.model.dto;
+package com.namusd.jwtredis.model.dto.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

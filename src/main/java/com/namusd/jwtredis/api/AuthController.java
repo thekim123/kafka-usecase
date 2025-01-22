@@ -1,7 +1,7 @@
 package com.namusd.jwtredis.api;
 
 import com.namusd.jwtredis.facade.JwtFacade;
-import com.namusd.jwtredis.model.dto.JwtDto;
+import com.namusd.jwtredis.model.dto.auth.JwtDto;
 import com.namusd.jwtredis.service.JwtService;
 import com.namusd.jwtredis.service.RedisService;
 import com.namusd.jwtredis.util.JwtUtil;
@@ -16,13 +16,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @RestController
 @RequiredArgsConstructor

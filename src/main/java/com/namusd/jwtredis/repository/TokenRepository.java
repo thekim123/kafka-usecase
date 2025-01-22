@@ -1,6 +1,6 @@
 package com.namusd.jwtredis.repository;
 
-import com.namusd.jwtredis.model.entity.RefreshToken;
+import com.namusd.jwtredis.model.entity.auth.RefreshToken;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

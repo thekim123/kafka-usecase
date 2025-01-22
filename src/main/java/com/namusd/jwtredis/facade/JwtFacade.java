@@ -2,13 +2,12 @@ package com.namusd.jwtredis.facade;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.namusd.jwtredis.config.auth.PrincipalDetails;
-import com.namusd.jwtredis.handler.ex.InvalidRefreshTokenException;
-import com.namusd.jwtredis.model.entity.RefreshToken;
-import com.namusd.jwtredis.model.entity.RefreshTokenIndex;
+import com.namusd.jwtredis.model.entity.auth.RefreshToken;
+import com.namusd.jwtredis.model.entity.auth.RefreshTokenIndex;
 import com.namusd.jwtredis.model.vo.RefreshTokenVo;
 import com.namusd.jwtredis.service.JwtService;
-import com.namusd.jwtredis.model.dto.JwtDto;
-import com.namusd.jwtredis.model.entity.User;
+import com.namusd.jwtredis.model.dto.auth.JwtDto;
+import com.namusd.jwtredis.model.entity.user.User;
 import com.namusd.jwtredis.service.RedisService;
 import com.namusd.jwtredis.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
 
 @RequiredArgsConstructor

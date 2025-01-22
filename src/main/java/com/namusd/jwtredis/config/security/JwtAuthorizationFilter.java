@@ -6,7 +6,7 @@ import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.namusd.jwtredis.config.auth.PrincipalDetails;
 import com.namusd.jwtredis.handler.ex.EntityNotFoundException;
 import com.namusd.jwtredis.model.constant.JwtProperties;
-import com.namusd.jwtredis.model.entity.User;
+import com.namusd.jwtredis.model.entity.user.User;
 import com.namusd.jwtredis.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;

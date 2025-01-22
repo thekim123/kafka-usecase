@@ -1,6 +1,6 @@
 package com.namusd.jwtredis.repository;
 
-import com.namusd.jwtredis.model.entity.RefreshTokenIndex;
+import com.namusd.jwtredis.model.entity.auth.RefreshTokenIndex;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;

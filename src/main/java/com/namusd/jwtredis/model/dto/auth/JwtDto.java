@@ -1,4 +1,4 @@
-package com.namusd.jwtredis.model.dto;
+package com.namusd.jwtredis.model.dto.auth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;

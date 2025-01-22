@@ -1,4 +1,4 @@
-package com.namusd.jwtredis.model.entity;
+package com.namusd.jwtredis.model.entity.user;
 
 import com.namusd.jwtredis.model.dto.UserDto;
 import lombok.AllArgsConstructor;

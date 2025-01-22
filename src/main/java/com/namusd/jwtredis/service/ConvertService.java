@@ -1,6 +1,6 @@
 package com.namusd.jwtredis.service;
 
-import com.namusd.jwtredis.model.dto.ConvertDto;
+import com.namusd.jwtredis.model.dto.video.ConvertDto;
 
 public interface ConvertService {
 

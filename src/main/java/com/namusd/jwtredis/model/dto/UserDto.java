@@ -1,6 +1,6 @@
 package com.namusd.jwtredis.model.dto;
 
-import com.namusd.jwtredis.model.entity.UserRole;
+import com.namusd.jwtredis.model.entity.user.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

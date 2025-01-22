@@ -1,9 +1,9 @@
 package com.namusd.jwtredis.model.entity.video;
 
-import com.namusd.jwtredis.model.dto.VideoDto;
+import com.namusd.jwtredis.model.dto.video.VideoDto;
 import com.namusd.jwtredis.model.entity.AttachFile;
 import com.namusd.jwtredis.model.entity.BaseTimeEntity;
-import com.namusd.jwtredis.model.entity.User;
+import com.namusd.jwtredis.model.entity.user.User;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -33,6 +33,9 @@ public class Video extends BaseTimeEntity {
     @OneToOne
     private AttachFile videoFile;
 
+    @OneToOne
+    private OriginalFrame originalFrame;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id")
     private User owner;
@@ -47,7 +50,22 @@ public class Video extends BaseTimeEntity {
                 .build();
     }
 
+    public VideoDto.Detail toDetail() {
+        return VideoDto.Detail.builder()
+                .videoId(this.videoId.toString())
+                .videoTitle(this.videoTitle)
+                .workTitle(this.workTitle)
+                .owner(this.owner.toDto())
+                .frameInfo(this.originalFrame.toDto())
+                .videoInfo(this.videoFile.toDto())
+                .build();
+    }
+
     public void withVideoFile(AttachFile attachFile) {
         this.videoFile = attachFile;
+    }
+
+    public void withOriginalFrame(OriginalFrame originalFrame) {
+        this.originalFrame = originalFrame;
     }
 }

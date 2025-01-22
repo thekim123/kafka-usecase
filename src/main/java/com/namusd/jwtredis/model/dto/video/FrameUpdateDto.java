@@ -1,4 +1,4 @@
-package com.namusd.jwtredis.model.dto;
+package com.namusd.jwtredis.model.dto.video;
 
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
