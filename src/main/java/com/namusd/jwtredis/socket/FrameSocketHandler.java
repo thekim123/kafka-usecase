@@ -2,6 +2,7 @@ package com.namusd.jwtredis.socket;
 
 import com.namusd.jwtredis.model.dto.video.FrameRequestDto;
 import com.namusd.jwtredis.model.dto.video.FrameStreamDto;
+import com.namusd.jwtredis.service.AttachFileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -20,10 +21,11 @@ import java.util.Base64;
 public class FrameSocketHandler {
 
     private final SimpMessagingTemplate messagingTemplate;
+    private final AttachFileService attachFileService;
 
-    @MessageMapping("frames/request/{videoId}") // 클라이언트가 "/app/frames/request"로 요청
+    // 클라이언트가 "/app/frames/request"로 요청
+    @MessageMapping("frames/request/{videoId}")
     public void streamFrames(@RequestBody FrameRequestDto request, @DestinationVariable String videoId) {
-        log.info("video id: {}", videoId);
         int start = request.getStart();
         int end = request.getEnd();
 
@@ -38,8 +40,9 @@ public class FrameSocketHandler {
         for (int i = start; i <= end; i++) {
             try {
                 // 프레임 파일 경로를 지정
-                String framePath = String.format("frames/frame_%04d.jpg", i);
-                inputStream = getClass().getClassLoader().getResourceAsStream(framePath);
+                String framePath = String.format(videoId + "/frames/frame_%04d.jpg", i);
+
+                inputStream = attachFileService.getFile(framePath);
                 if (inputStream == null) {
                     throw new FileNotFoundException("File not found: " + framePath);
                 }

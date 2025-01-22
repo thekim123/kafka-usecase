@@ -4,9 +4,11 @@ import com.namusd.jwtredis.handler.ex.EntityNotFoundException;
 import com.namusd.jwtredis.model.entity.AttachFile;
 import com.namusd.jwtredis.repository.AttachFileRepository;
 import com.namusd.jwtredis.util.FileUtil;
+import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import io.minio.RemoveObjectArgs;
+import io.minio.errors.MinioException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +16,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.UUID;
 
@@ -112,4 +118,24 @@ public class AttachFileServiceImpl implements AttachFileService {
         fileRepository.deleteById(fileId);
     }
 
+    /**
+     * @param filePath endpoint, bucket을 제외한 filepath
+     * @return
+     */
+    @Override
+    public InputStream getFile(String filePath) {
+        try {
+            return minioClient.getObject(
+                    GetObjectArgs.builder()
+                            .bucket(this.bucket)
+                            .object(filePath)
+                            .build()
+            );
+        } catch (MinioException e) {
+            log.error(e.getMessage());
+        } catch (IOException | NoSuchAlgorithmException | InvalidKeyException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
 }

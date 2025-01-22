@@ -4,6 +4,7 @@ import com.namusd.jwtredis.model.dto.AttachFileDto;
 import com.namusd.jwtredis.model.entity.AttachFile;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
 import java.util.List;
 
 public interface AttachFileService {
@@ -19,4 +20,6 @@ public interface AttachFileService {
     void removeFile(String filePath);
 
     void deleteFileData(Long fileId);
+
+    InputStream getFile(String filePath);
 }
