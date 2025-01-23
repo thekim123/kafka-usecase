@@ -1,0 +1,38 @@
+@startuml
+autonumber
+actor Client as Client
+entity Server as Server
+entity Engine as Engine
+database DB as DB
+database Storage as Storage
+
+==Workspace(작업환경) 준비==
+Client -> Server: 동영상 저장
+Server --> Client: workspace 준비중 알림
+Server -> DB: 동영상 메타데이터 저장
+Server -> Storage: 동영상 파일 저장
+Server -> Engine: 비식별화 처리 요청
+Engine --> Server: 비식별화 처리 완료
+Server -> Engine: 타임라인 썸네일 요청
+Engine --> Server: 타임라인 썸네일 경로 전달
+Server --> Client: workspace 준비 완료 알림
+
+==동영상 편집==
+Client -> Server: 프레임 번호, 모자이크 좌표 전달
+Server -> DB: 프레임번호, 모자이크 좌표 저장
+Server --> Client: 완료 응답
+
+==동영상 완료==
+Client -> Server: 작업 완료 요청
+Server --> Client: 최종 영상 처리 중 알림
+Server -> DB: 변경된 프레임, 모자이크 좌표 쿼리
+Server -> Engine: 변경한 데이터를 이용하여 해당 프레임 수정
+Engine -> Storage: 최종 영상 파일 저장
+Engine --> Server: 최종 영상 경로 및 메타데이터 전달
+Server -> DB: 영상 메타데이터 저장
+Server --> Client: 최종 영상 경로 전달
+
+==에러 처리==
+Engine --> Server: 비식별화 실패 알림
+Server --> Client: 작업 실패 알림
+@enduml
