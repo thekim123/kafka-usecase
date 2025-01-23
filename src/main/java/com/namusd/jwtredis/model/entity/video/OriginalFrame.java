@@ -18,8 +18,7 @@ public class OriginalFrame {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "video_id")
+    @OneToOne
     private Video video;
 
     private int startSequence;

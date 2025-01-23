@@ -13,6 +13,7 @@ import com.namusd.jwtredis.repository.OriginalFrameRepository;
 import com.namusd.jwtredis.repository.VideoRepository;
 import com.namusd.jwtredis.service.helper.VideoServiceHelper;
 import com.namusd.jwtredis.util.ParseUtil;
+import com.namusd.jwtredis.util.VideoUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -40,10 +41,13 @@ public class VideoService {
     @Transactional
     public String insertVideo(Authentication auth, String workTitle, MultipartFile file) {
         User loginUser = ((PrincipalDetails) auth.getPrincipal()).getUser();
+        // 저장할 때 소수점을 버려버림
+        double duration = VideoUtil.getVideoDuration(file);
         Video video = Video.builder()
                 .videoTitle(file.getOriginalFilename())
                 .workTitle(workTitle)
                 .owner(loginUser)
+                .duration(duration)
                 .build();
         Video entity = videoRepository.save(video);
         return entity.getVideoId().toString();

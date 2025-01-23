@@ -30,6 +30,7 @@ public class VideoDto {
         private String videoId;
         private String videoTitle;
         private String workTitle;
+        private Double duration;
         private UserDto.Response owner;
         private OriginalFrameDto.Response frameInfo;
         private AttachFileDto.Response videoInfo;

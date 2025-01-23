@@ -30,6 +30,9 @@ public class Video extends BaseTimeEntity {
     @Column(name = "video_title", nullable = false, length = 100)
     private String videoTitle;
 
+    @Column(name="duration", columnDefinition = "DOUBLE")
+    private double duration;
+
     @OneToOne
     private AttachFile videoFile;
 
@@ -55,6 +58,7 @@ public class Video extends BaseTimeEntity {
                 .videoId(this.videoId.toString())
                 .videoTitle(this.videoTitle)
                 .workTitle(this.workTitle)
+                .duration(this.duration)
                 .owner(this.owner.toDto())
                 .frameInfo(this.originalFrame.toDto())
                 .videoInfo(this.videoFile.toDto())
