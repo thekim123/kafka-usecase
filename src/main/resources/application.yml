@@ -29,6 +29,7 @@ spring:
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     show-sql: true
+    database-platform: org.hibernate.dialect.MariaDBDialect
 
   kafka:
     bootstrap-servers: localhost:9092
