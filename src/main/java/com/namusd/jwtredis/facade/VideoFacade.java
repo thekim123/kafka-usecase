@@ -4,7 +4,7 @@ import com.namusd.jwtredis.callback.LogCallback;
 import com.namusd.jwtredis.model.constant.ConvertOperation;
 import com.namusd.jwtredis.model.constant.FilePathConstant;
 import com.namusd.jwtredis.model.dto.video.ConvertDto;
-import com.namusd.jwtredis.model.entity.AttachFile;
+import com.namusd.jwtredis.model.entity.attachFile.AttachFile;
 import com.namusd.jwtredis.service.AttachFileService;
 import com.namusd.jwtredis.service.VideoService;
 import com.namusd.jwtredis.util.ParseUtil;
@@ -26,8 +26,8 @@ public class VideoFacade {
     @Value("${spring.minio.bucket}")
     private String bucket;
 
-    public String registerVideo(MultipartFile file, String workTitle,Authentication auth) {
-        String videoId = videoService.insertVideo(auth, workTitle,file);
+    public String registerVideo(MultipartFile file, String workTitle, Authentication auth) {
+        String videoId = videoService.insertVideo(auth, workTitle, file);
 
         AttachFile attachFile = attachFileService.saveFileData("video/" + videoId, file);
         attachFileService.uploadFile(file, FilePathConstant.VIDEO_UPLOAD_PATH + videoId);
@@ -36,21 +36,20 @@ public class VideoFacade {
 
         ConvertDto.Request request = ConvertDto.Request.builder()
                 .bucket(this.bucket)
-                .bucket_name(bucket)
+                .bucket_name(this.bucket)
                 .operation(ConvertOperation.SPLIT.getValue())
                 .url(attachFile.getFilePath())
                 .requestId(videoId)
                 .build();
 
-        ProducerRecord<String, String> record
-                = new ProducerRecord<>("video-processing-requests", request.getRequestId(), ParseUtil.toJson(request));
-        var future = kafkaTemplate.send(record);
-        future.addCallback(new LogCallback());
+        ProducerRecord<String, String> timelineRecord
+                = new ProducerRecord<>("video-timeline-requests", request.getRequestId(), ParseUtil.toJson(request));
+        var timelineFuture = kafkaTemplate.send(timelineRecord);
+        timelineFuture.addCallback(new LogCallback());
         return videoId;
     }
 
 
     public void saveFrameMetadata(ConvertDto.Response record) {
-        videoService.saveOriginalFrameData(record);
     }
 }

@@ -1,7 +1,7 @@
 package com.namusd.jwtredis.listener;
 
-import com.namusd.jwtredis.facade.VideoFacade;
-import com.namusd.jwtredis.model.dto.video.ConvertDto;
+import com.namusd.jwtredis.model.dto.video.TimelineDto;
+import com.namusd.jwtredis.service.VideoService;
 import com.namusd.jwtredis.util.ParseUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -13,11 +13,11 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class VideoProcessingListener {
 
-    private final VideoFacade videoFacade;
+    private final VideoService videoService;
 
-    @KafkaListener(topics = "video-processing-response", groupId = "video-processing-gruop")
-    public void handleResponse(ConsumerRecord<String, String> record) {
-        ConvertDto.Response response = ParseUtil.fromJson(record.value(), ConvertDto.Response.class);
-        videoFacade.saveFrameMetadata(response);
+    @KafkaListener(topics = "video-timeline-response", groupId = "video-timeline-group")
+    public void handleTimelineResponse(ConsumerRecord<String, String> record) {
+        TimelineDto.KafkaResponseMessage response = ParseUtil.fromJson(record.value(), TimelineDto.KafkaResponseMessage.class);
+        videoService.saveTimelineFrameData(response);
     }
 }

@@ -1,7 +1,8 @@
-package com.namusd.jwtredis.model.entity;
+package com.namusd.jwtredis.model.entity.attachFile;
 
 
 import com.namusd.jwtredis.model.dto.AttachFileDto;
+import com.namusd.jwtredis.model.entity.BaseTimeEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,6 +25,10 @@ public class AttachFile extends BaseTimeEntity {
     private String fileKey;
     private String fileName;
     private String fileDir;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name="file_type")
+    private AttachFileType fileType;
 
     public AttachFileDto.Response toDto() {
         return AttachFileDto.Response.builder()

@@ -1,6 +1,5 @@
 package com.namusd.jwtredis.api;
 
-import com.namusd.jwtredis.model.entity.AttachFile;
 import com.namusd.jwtredis.service.AttachFileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

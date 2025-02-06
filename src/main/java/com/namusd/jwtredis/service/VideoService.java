@@ -3,13 +3,11 @@ package com.namusd.jwtredis.service;
 import com.namusd.jwtredis.callback.LogCallback;
 import com.namusd.jwtredis.config.auth.PrincipalDetails;
 import com.namusd.jwtredis.handler.ex.EntityNotFoundException;
-import com.namusd.jwtredis.model.dto.video.ConvertDto;
+import com.namusd.jwtredis.model.dto.video.TimelineDto;
 import com.namusd.jwtredis.model.dto.video.VideoDto;
-import com.namusd.jwtredis.model.entity.AttachFile;
+import com.namusd.jwtredis.model.entity.attachFile.AttachFile;
 import com.namusd.jwtredis.model.entity.user.User;
-import com.namusd.jwtredis.model.entity.video.OriginalFrame;
 import com.namusd.jwtredis.model.entity.video.Video;
-import com.namusd.jwtredis.repository.OriginalFrameRepository;
 import com.namusd.jwtredis.repository.VideoRepository;
 import com.namusd.jwtredis.service.helper.VideoServiceHelper;
 import com.namusd.jwtredis.util.ParseUtil;
@@ -34,9 +32,7 @@ import java.util.UUID;
 public class VideoService {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
-
     private final VideoRepository videoRepository;
-    private final OriginalFrameRepository originalFrameRepository;
 
     @Transactional
     public String insertVideo(Authentication auth, String workTitle, MultipartFile file) {
@@ -67,15 +63,10 @@ public class VideoService {
     }
 
     @Transactional
-    public void saveOriginalFrameData(ConvertDto.Response response) {
-        Video video = VideoServiceHelper.findVideoById(response.getRequestId(), videoRepository);
-        OriginalFrame originalFrame = OriginalFrame.builder()
-                .startSequence(response.getStartSequence())
-                .endSequence(response.getEndSequence())
-                .video(video)
-                .build();
-        originalFrameRepository.save(originalFrame);
-        video.withOriginalFrame(originalFrame);
+    public void saveTimelineFrameData(TimelineDto.KafkaResponseMessage response) {
+        System.out.println("message response: " + response);
+        Video video = VideoServiceHelper.findVideoById(response.getVideoId(), videoRepository);
+        video.afterTimeline();
     }
 
     @Transactional(readOnly = true)

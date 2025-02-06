@@ -1,7 +1,6 @@
 package com.namusd.jwtredis.service;
 
-import com.namusd.jwtredis.model.dto.AttachFileDto;
-import com.namusd.jwtredis.model.entity.AttachFile;
+import com.namusd.jwtredis.model.entity.attachFile.AttachFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;

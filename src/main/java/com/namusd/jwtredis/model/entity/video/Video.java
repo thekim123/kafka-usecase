@@ -1,13 +1,15 @@
 package com.namusd.jwtredis.model.entity.video;
 
 import com.namusd.jwtredis.model.dto.video.VideoDto;
-import com.namusd.jwtredis.model.entity.AttachFile;
+import com.namusd.jwtredis.model.entity.attachFile.AttachFile;
 import com.namusd.jwtredis.model.entity.BaseTimeEntity;
 import com.namusd.jwtredis.model.entity.user.User;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -30,14 +32,20 @@ public class Video extends BaseTimeEntity {
     @Column(name = "video_title", nullable = false, length = 100)
     private String videoTitle;
 
-    @Column(name="duration", columnDefinition = "DOUBLE")
+    @Column(name = "duration", columnDefinition = "DOUBLE")
     private double duration;
+
+    /**
+     * @apiNote 비디오 작업의 상태를 나타내는 상태값
+     * @see VideoStatus
+     */
+    @Column(name = "video_status", length = 20)
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private VideoStatus videoStatus = VideoStatus.REGISTERED;
 
     @OneToOne
     private AttachFile videoFile;
-
-    @OneToOne
-    private OriginalFrame originalFrame;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id")
@@ -50,6 +58,7 @@ public class Video extends BaseTimeEntity {
                 .videoFileId(this.videoFile.getId())
                 .ownerId(this.owner.getId())
                 .workTitle(this.workTitle)
+                .videoStatus(this.videoStatus)
                 .build();
     }
 
@@ -60,7 +69,6 @@ public class Video extends BaseTimeEntity {
                 .workTitle(this.workTitle)
                 .duration(this.duration)
                 .owner(this.owner.toDto())
-                .frameInfo(this.originalFrame.toDto())
                 .videoInfo(this.videoFile.toDto())
                 .build();
     }
@@ -69,7 +77,9 @@ public class Video extends BaseTimeEntity {
         this.videoFile = attachFile;
     }
 
-    public void withOriginalFrame(OriginalFrame originalFrame) {
-        this.originalFrame = originalFrame;
+    public void afterTimeline() {
+        this.videoStatus = VideoStatus.READY;
     }
+
+
 }

@@ -2,6 +2,7 @@ package com.namusd.jwtredis.model.dto.video;
 
 import com.namusd.jwtredis.model.dto.AttachFileDto;
 import com.namusd.jwtredis.model.dto.UserDto;
+import com.namusd.jwtredis.model.entity.video.VideoStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,6 +20,7 @@ public class VideoDto {
         private Long videoFileId;
         private Long ownerId;
         private String workTitle;
+        private VideoStatus videoStatus;
     }
 
 
@@ -32,7 +34,6 @@ public class VideoDto {
         private String workTitle;
         private Double duration;
         private UserDto.Response owner;
-        private OriginalFrameDto.Response frameInfo;
         private AttachFileDto.Response videoInfo;
     }
 }

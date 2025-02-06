@@ -14,7 +14,6 @@ public interface VideoRepository extends JpaRepository<Video, Long> {
     Optional<Video> findByVideoId(UUID videoId);
 
     @Query("SELECT v FROM Video v " +
-            "JOIN FETCH v.originalFrame " +
             "JOIN FETCH v.owner " +
             "JOIN FETCH v.videoFile " +
             "WHERE v.videoId = :videoId")

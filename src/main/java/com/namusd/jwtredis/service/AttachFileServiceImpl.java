@@ -1,7 +1,7 @@
 package com.namusd.jwtredis.service;
 
 import com.namusd.jwtredis.handler.ex.EntityNotFoundException;
-import com.namusd.jwtredis.model.entity.AttachFile;
+import com.namusd.jwtredis.model.entity.attachFile.AttachFile;
 import com.namusd.jwtredis.repository.AttachFileRepository;
 import com.namusd.jwtredis.util.FileUtil;
 import io.minio.GetObjectArgs;

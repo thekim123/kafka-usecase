@@ -4,7 +4,7 @@ import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 
-public class FrameUpdateDto {
+public class FrameDto {
 
     /**
      * ModelAttribute를 사용하기 위해 setter 넣음

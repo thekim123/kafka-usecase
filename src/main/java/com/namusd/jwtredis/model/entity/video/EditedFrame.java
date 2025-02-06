@@ -1,6 +1,6 @@
 package com.namusd.jwtredis.model.entity.video;
 
-import com.namusd.jwtredis.model.entity.AttachFile;
+import com.namusd.jwtredis.model.entity.attachFile.AttachFile;
 import lombok.*;
 
 import javax.persistence.*;
