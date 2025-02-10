@@ -29,8 +29,9 @@ public class VideoFacade {
     public String registerVideo(MultipartFile file, String workTitle,Authentication auth) {
         String videoId = videoService.insertVideo(auth, workTitle,file);
 
-        AttachFile attachFile = attachFileService.saveFileData("video/" + videoId, file);
-        attachFileService.uploadFile(file, FilePathConstant.VIDEO_UPLOAD_PATH + videoId);
+        AttachFile attachFile = attachFileService.saveFileData(videoId, file);
+//        attachFileService.uploadFile(file, FilePathConstant.VIDEO_UPLOAD_PATH + videoId);
+        attachFileService.uploadFile(file, videoId);
 
         videoService.withVideoFile(attachFile, videoId);
 

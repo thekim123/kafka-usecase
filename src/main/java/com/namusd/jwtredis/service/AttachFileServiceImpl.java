@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -46,13 +47,14 @@ public class AttachFileServiceImpl implements AttachFileService {
      */
     @Override
     @Transactional
-    public AttachFile saveFileData(String dir, MultipartFile file) {
+    public AttachFile saveFileData(String videoId, MultipartFile file) {
         UUID uuid = UUID.randomUUID();
         String fileKey = uuid.toString();
-        String filePath = FileUtil.buildFilePath(dir, file.getOriginalFilename());
+//        String filePath = FileUtil.buildFilePath(dir, file.getOriginalFilename());
+        String filePath = FileUtil.buildFilePath(videoId, "original");
         AttachFile attachFile = AttachFile.builder()
                 .fileName(file.getOriginalFilename())
-                .fileDir(dir)
+                .fileDir(videoId)
                 .fileKey(fileKey)
                 .filePath(String.format("%s/%s/%s", this.endpoint, this.bucket, filePath))
                 .build();
@@ -61,7 +63,18 @@ public class AttachFileServiceImpl implements AttachFileService {
 
     @Override
     public void uploadFile(MultipartFile file, String dir) {
-        String objectName = dir + "/" + file.getOriginalFilename();
+//        String objectName = dir + "/" + file.getOriginalFilename();
+        // 원본 파일의 확장자 가져오기
+        String originalFilename = file.getOriginalFilename();
+        String extension = ""; // 기본값
+
+        if (originalFilename != null && originalFilename.contains(".")) {
+            extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+        }
+
+        // 확장자를 추가하여 저장
+        String objectName = dir + "/original" + extension;
+
         try {
             minioClient.putObject(
                     PutObjectArgs.builder()
@@ -113,6 +126,7 @@ public class AttachFileServiceImpl implements AttachFileService {
     @Transactional
     public void deleteFileData(Long fileId) {
         AttachFile file = fileRepository.findById(fileId)
+
                 .orElseThrow(() -> new EntityNotFoundException("파일 데이터가 DB에 없어요"));
         this.removeFile("/" + file.getFileDir() + "/" + file.getFileName());
         fileRepository.deleteById(fileId);
