@@ -59,9 +59,63 @@ public class AttachFileServiceImpl implements AttachFileService {
         return fileRepository.save(attachFile);
     }
 
+    /**
+     * 파일에 대한 정보를 DB에 저장.
+     * 실제 파일은 MinIO에 저장
+     *
+     * @param videoId  파일 저장 디렉토리
+     * @param file MultipartFile
+     *             TODO: 이거 쓰는 부분 통합시켜야함
+     */
+    @Transactional
+    public AttachFile saveFileDataOriginal(String videoId, MultipartFile file) {
+        UUID uuid = UUID.randomUUID();
+        String fileKey = uuid.toString();
+//        String filePath = FileUtil.buildFilePath(dir, file.getOriginalFilename());
+        String filePath = FileUtil.buildFilePath(videoId, "original");
+        AttachFile attachFile = AttachFile.builder()
+                .fileName(file.getOriginalFilename())
+                .fileDir(videoId)
+                .fileKey(fileKey)
+                .filePath(String.format("%s/%s/%s", this.endpoint, this.bucket, filePath))
+                .build();
+        return fileRepository.save(attachFile);
+    }
+
+
     @Override
     public void uploadFile(MultipartFile file, String dir) {
         String objectName = dir + file.getOriginalFilename();
+        try {
+            minioClient.putObject(
+                    PutObjectArgs.builder()
+                            .bucket(this.bucket)
+                            .object(objectName)
+                            .stream(file.getInputStream(), file.getSize(), -1)
+                            .contentType(file.getContentType())
+                            .build()
+            );
+
+            // return "File uploaded successfully: " + file.getOriginalFilename();
+        } catch (Exception e) {
+            throw new RuntimeException("Error uploading file: " + e.getMessage());
+        }
+    }
+
+    // TODO: 이거 쓰는 부분 통합시켜야함
+    public void uploadFileOriginal(MultipartFile file, String dir) {
+//        String objectName = dir + "/" + file.getOriginalFilename();
+        // 원본 파일의 확장자 가져오기
+        String originalFilename = file.getOriginalFilename();
+        String extension = ""; // 기본값
+
+        if (originalFilename != null && originalFilename.contains(".")) {
+            extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+        }
+
+        // 확장자를 추가하여 저장
+        String objectName = dir + "/original" + extension;
+
         try {
             minioClient.putObject(
                     PutObjectArgs.builder()

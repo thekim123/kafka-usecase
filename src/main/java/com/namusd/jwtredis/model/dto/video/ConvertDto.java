@@ -38,13 +38,10 @@ public class ConvertDto {
         private String status;  // 작업 상태
         private String requestId; // 요청 ID
         private String outputPath; // 처리 결과 경로
-        private String firstFrameUrl; // 첫 번째 프레임 URL
-        private String lastFrameUrl; // 마지막 프레임 URL
-        private Integer startSequence;
+        private Integer startSequence = 0;
         private Integer endSequence;
         private String videoUrl; // 결과 비디오 URL
         private String operation;   // 작업 유형 (split, merge)
         private String message;
-
     }
 }
