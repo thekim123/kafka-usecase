@@ -152,4 +152,10 @@ public class AttachFileServiceImpl implements AttachFileService {
         }
         return null;
     }
+
+    @Override
+    public String getFilePath(String videoId) {
+        return fileRepository.findFilePathByFileDir(videoId)
+                .orElseThrow(() -> new EntityNotFoundException("파일 데이터가 DB에 없어요"));
+    }
 }
