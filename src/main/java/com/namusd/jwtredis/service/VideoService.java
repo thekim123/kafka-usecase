@@ -37,7 +37,6 @@ public class VideoService {
     @Transactional
     public String insertVideo(Authentication auth, String workTitle, MultipartFile file) {
         User loginUser = ((PrincipalDetails) auth.getPrincipal()).getUser();
-        // 저장할 때 소수점을 버려버림
         double duration = VideoUtil.getVideoDuration(file);
         Video video = Video.builder()
                 .videoTitle(file.getOriginalFilename())
