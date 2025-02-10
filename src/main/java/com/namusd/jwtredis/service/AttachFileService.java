@@ -21,4 +21,6 @@ public interface AttachFileService {
     void deleteFileData(Long fileId);
 
     InputStream getFile(String filePath);
+
+    String getFilePath(String videoId);
 }
