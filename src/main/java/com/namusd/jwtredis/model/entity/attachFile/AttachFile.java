@@ -22,9 +22,6 @@ public class AttachFile extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String filePath;
-
-    //TODO: 뺼까? 쓸모없어보이는데....
-    private String fileKey;
     private String fileName;
     private String fileDir;
 
@@ -36,7 +33,6 @@ public class AttachFile extends BaseTimeEntity {
         return AttachFileDto.Response.builder()
                 .id(this.id)
                 .filePath(this.filePath)
-                .fileKey(this.fileKey)
                 .fileDir(this.fileDir)
                 .fileName(this.fileName)
                 .build();
