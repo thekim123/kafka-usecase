@@ -66,7 +66,7 @@ public class VideoService {
     public void saveTimelineFrameData(TimelineDto.KafkaResponseMessage response) {
         System.out.println("message response: " + response);
         Video video = VideoServiceHelper.findVideoById(response.getVideoId(), videoRepository);
-        video.afterTimeline();
+        video.registerMetadata(response);
     }
 
     @Transactional(readOnly = true)

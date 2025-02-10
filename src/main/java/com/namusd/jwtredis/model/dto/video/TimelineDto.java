@@ -12,5 +12,8 @@ public class TimelineDto {
     public static class KafkaResponseMessage {
         private String videoId;
         private String message;
+        private int fps;
+        private int totalFrameCount;
+
     }
 }

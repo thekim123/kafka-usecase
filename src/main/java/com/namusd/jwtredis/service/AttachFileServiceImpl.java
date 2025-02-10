@@ -61,7 +61,7 @@ public class AttachFileServiceImpl implements AttachFileService {
 
     @Override
     public void uploadFile(MultipartFile file, String dir) {
-        String objectName = dir + "/" + file.getOriginalFilename();
+        String objectName = dir + file.getOriginalFilename();
         try {
             minioClient.putObject(
                     PutObjectArgs.builder()

@@ -1,5 +1,6 @@
 package com.namusd.jwtredis.model.entity.video;
 
+import com.namusd.jwtredis.model.dto.video.TimelineDto;
 import com.namusd.jwtredis.model.dto.video.VideoDto;
 import com.namusd.jwtredis.model.entity.attachFile.AttachFile;
 import com.namusd.jwtredis.model.entity.BaseTimeEntity;
@@ -34,6 +35,12 @@ public class Video extends BaseTimeEntity {
 
     @Column(name = "duration", columnDefinition = "DOUBLE")
     private double duration;
+
+    @Column(name = "fps")
+    private Integer fps;
+
+    @Column(name = "total_frame_count")
+    private Integer totalFrameCount;
 
     /**
      * @apiNote 비디오 작업의 상태를 나타내는 상태값
@@ -70,6 +77,8 @@ public class Video extends BaseTimeEntity {
                 .duration(this.duration)
                 .owner(this.owner.toDto())
                 .videoInfo(this.videoFile.toDto())
+                .fps(this.fps)
+                .totalFrameCount(this.totalFrameCount)
                 .build();
     }
 
@@ -77,8 +86,10 @@ public class Video extends BaseTimeEntity {
         this.videoFile = attachFile;
     }
 
-    public void afterTimeline() {
+    public void registerMetadata(TimelineDto.KafkaResponseMessage response) {
         this.videoStatus = VideoStatus.READY;
+        this.fps = response.getFps();
+        this.totalFrameCount = response.getTotalFrameCount();
     }
 
 

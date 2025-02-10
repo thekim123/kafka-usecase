@@ -29,8 +29,8 @@ public class VideoFacade {
     public String registerVideo(MultipartFile file, String workTitle, Authentication auth) {
         String videoId = videoService.insertVideo(auth, workTitle, file);
 
-        AttachFile attachFile = attachFileService.saveFileData("video/" + videoId, file);
-        attachFileService.uploadFile(file, FilePathConstant.VIDEO_UPLOAD_PATH + videoId);
+        AttachFile attachFile = attachFileService.saveFileData(videoId +"/video", file);
+        attachFileService.uploadFile(file, videoId + FilePathConstant.VIDEO_UPLOAD_PATH);
 
         videoService.withVideoFile(attachFile, videoId);
 
@@ -49,7 +49,4 @@ public class VideoFacade {
         return videoId;
     }
 
-
-    public void saveFrameMetadata(ConvertDto.Response record) {
-    }
 }

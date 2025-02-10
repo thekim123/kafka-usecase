@@ -33,7 +33,9 @@ public class VideoDto {
         private String videoTitle;
         private String workTitle;
         private Double duration;
+        private Integer totalFrameCount;
         private UserDto.Response owner;
         private AttachFileDto.Response videoInfo;
+        private int fps;
     }
 }

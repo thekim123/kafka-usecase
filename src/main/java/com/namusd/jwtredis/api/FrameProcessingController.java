@@ -4,13 +4,10 @@ import com.namusd.jwtredis.model.dto.video.ConvertDto;
 import com.namusd.jwtredis.model.dto.video.FrameDto;
 import com.namusd.jwtredis.service.AttachFileService;
 import com.namusd.jwtredis.service.ConvertService;
-import com.namusd.jwtredis.service.VideoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
