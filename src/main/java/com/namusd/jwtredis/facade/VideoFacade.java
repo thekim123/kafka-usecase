@@ -54,4 +54,28 @@ public class VideoFacade {
     public void saveFrameMetadata(ConvertDto.Response record) {
         videoService.saveOriginalFrameData(record);
     }
+
+
+    /** 최종 영상 처리 요청*/
+    public void getFinalVideo(String videoId, String editedMetadata) {
+
+        String filePath = attachFileService.getFilePath(videoId);
+
+        // TODO: edited_meatadata.json bucket에 저장하는 로직
+
+        // TODO
+
+        ConvertDto.Request request = ConvertDto.Request.builder()
+                .bucket(this.bucket)
+                .bucket_name(bucket)
+                .operation(ConvertOperation.MERGE.getValue())
+                .url(filePath)
+                .requestId(videoId)
+                .build();
+
+        ProducerRecord<String, String> record
+                = new ProducerRecord<>("video-processing-requests", request.getRequestId(), ParseUtil.toJson(request));
+        var future = kafkaTemplate.send(record);
+        future.addCallback(new LogCallback());
+    }
 }

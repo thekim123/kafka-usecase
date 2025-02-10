@@ -48,4 +48,11 @@ public class VideoProcessingController {
         return ResponseEntity.ok(detail);
     }
 
+
+//    TODO: Targe_Image를 파라미터로 받도록 수정.. 여러장 받아 저장...
+    @PostMapping("/edit/{videoId}")
+    public ResponseEntity<?> getFinalVideo(Authentication auth, @PathVariable("videoId") String videoId, @RequestBody String editedMetadata) {
+        videoFacade.getFinalVideo(videoId, editedMetadata);
+        return ResponseEntity.ok().build();
+    }
 }
