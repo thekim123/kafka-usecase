@@ -12,7 +12,6 @@ public class ConvertDto {
     @ToString
     public static class Request {
         private String url; // input
-        private String operation; // 작업 유형 (split, merge)
         private String requestId; // 요청 ID
         private String bucket_name;
         private String bucket;
@@ -21,7 +20,6 @@ public class ConvertDto {
         public static Request createWithRequestId(String url, String requestId, String bucket) {
             return Request.builder()
                     .url(url)
-                    .operation(ConvertOperation.SPLIT.getValue())
                     .requestId(requestId)
                     .bucket(bucket)
                     .build();
@@ -41,7 +39,6 @@ public class ConvertDto {
         private Integer startSequence = 0;
         private Integer endSequence;
         private String videoUrl; // 결과 비디오 URL
-        private String operation;   // 작업 유형 (split, merge)
         private String message;
     }
 }

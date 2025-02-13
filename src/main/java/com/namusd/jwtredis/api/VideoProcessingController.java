@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/video")
@@ -27,11 +28,15 @@ public class VideoProcessingController {
     public ResponseEntity<?> registerVideo(
             Authentication auth,
             @RequestPart("file") MultipartFile file,
+            @RequestPart(value = "images", required = false) List<MultipartFile> targetImages, // TODO: FRONT, SIDE FACE 구분 저장.. 현재 NORMAL TYPE 으로 한 번에 저장
             @RequestPart("workTitle") String workTitle
     ) {
-        String videoId = videoFacade.registerVideo(file, workTitle, auth);
+        String videoId = videoFacade.registerVideo(file, targetImages, workTitle, auth);
+        // TODO: return 진행중 보내고, 완료시 풀링 등으로 수정 예정
         return ResponseEntity.created(URI.create("/api/video/single/" + videoId)).build();
     }
+
+
 
     @GetMapping("/list")
     public ResponseEntity<?> getVideoList(
@@ -49,10 +54,13 @@ public class VideoProcessingController {
     }
 
 
-//    TODO: Targe_Image를 파라미터로 받도록 수정.. 여러장 받아 저장...
-    @PostMapping("/edit/{videoId}")
-    public ResponseEntity<?> getFinalVideo(Authentication auth, @PathVariable("videoId") String videoId, @RequestBody String editedMetadata) {
-        videoFacade.getFinalVideo(videoId, editedMetadata);
+    @PostMapping("/finalize/{videoId}")
+    public ResponseEntity<?> editAndFinalizeVideo(
+            Authentication auth,
+            @PathVariable("videoId") String videoId,
+            @RequestBody String editedMetadata
+    ) {
+        videoFacade.editAndFinalizeVideo(auth, videoId, editedMetadata);
         return ResponseEntity.ok().build();
     }
 }

@@ -21,13 +21,13 @@ public class AttachFile extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String filePath;
-    private String fileName;
+    private String filePath;    // 파일이 저장된 경로
+    private String fileName;    // 원본 파일명
     private String fileDir;
 
     @Enumerated(EnumType.STRING)
     @Column(name="file_type")
-    private AttachFileType fileType;
+    private AttachFileType fileType;    // 파일의 컨텐츠 타입 (img, video)
 
     public AttachFileDto.Response toDto() {
         return AttachFileDto.Response.builder()
