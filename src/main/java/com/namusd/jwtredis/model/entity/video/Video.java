@@ -1,16 +1,15 @@
 package com.namusd.jwtredis.model.entity.video;
 
+import com.namusd.jwtredis.model.dto.video.MessageDto;
 import com.namusd.jwtredis.model.dto.video.TimelineDto;
 import com.namusd.jwtredis.model.dto.video.VideoDto;
-import com.namusd.jwtredis.model.entity.attachFile.AttachFile;
 import com.namusd.jwtredis.model.entity.BaseTimeEntity;
+import com.namusd.jwtredis.model.entity.attachFile.AttachFile;
 import com.namusd.jwtredis.model.entity.user.User;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -25,22 +24,28 @@ public class Video extends BaseTimeEntity {
     @GeneratedValue(generator = "video_uuid")
     @GenericGenerator(name = "video_uuid", strategy = "uuid2")
     @Column(name = "video_id", columnDefinition = "BINARY(16)")
-    private UUID videoId;
+    private UUID videoId;   // 각 영상 프로젝트를 구분하는 UUID
 
     @Column(name = "work_title", nullable = false)
-    private String workTitle;
+    private String workTitle;   // 작업 이름 (예: 금발머리 여성)
 
     @Column(name = "video_title", nullable = false, length = 100)
-    private String videoTitle;
+    private String videoTitle;  // 원본 파일명
 
     @Column(name = "duration", columnDefinition = "DOUBLE")
-    private double duration;
+    private double duration;    // 영상 길이 (초)
 
     @Column(name = "fps")
     private Integer fps;
 
+    @Column(name = "width")
+    private Integer width;
+
+    @Column(name = "height")
+    private Integer height;
+
     @Column(name = "total_frame_count")
-    private Integer totalFrameCount;
+    private Integer totalFrameCount;    // 총 프레임 수
 
     /**
      * @apiNote 비디오 작업의 상태를 나타내는 상태값
@@ -91,6 +96,23 @@ public class Video extends BaseTimeEntity {
         this.fps = response.getFps();
         this.totalFrameCount = response.getTotalFrameCount();
     }
+
+    //TODO: registerMetadata, updateMetadata 통합
+    public void updateMetadata(MessageDto.KafkaProcessedResponseMessage response) {
+        this.videoStatus = VideoStatus.READY;
+        this.fps = response.getVideoMetadata().getFps();
+        this.width = response.getVideoMetadata().getWidth();
+        this.height = response.getVideoMetadata().getHeight();
+        this.totalFrameCount = response.getVideoMetadata().getTotalFrames();
+        this.duration = response.getVideoMetadata().getDuration();
+    }
+
+
+    public void updateMetadata() {
+        this.videoStatus = VideoStatus.COMPLETE;
+    }
+
+
 
 
 }

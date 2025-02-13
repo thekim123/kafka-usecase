@@ -3,6 +3,7 @@ package com.namusd.jwtredis.service;
 import com.namusd.jwtredis.callback.LogCallback;
 import com.namusd.jwtredis.config.auth.PrincipalDetails;
 import com.namusd.jwtredis.handler.ex.EntityNotFoundException;
+import com.namusd.jwtredis.model.dto.video.MessageDto;
 import com.namusd.jwtredis.model.dto.video.TimelineDto;
 import com.namusd.jwtredis.model.dto.video.VideoDto;
 import com.namusd.jwtredis.model.entity.attachFile.AttachFile;
@@ -11,7 +12,6 @@ import com.namusd.jwtredis.model.entity.video.Video;
 import com.namusd.jwtredis.repository.VideoRepository;
 import com.namusd.jwtredis.service.helper.VideoServiceHelper;
 import com.namusd.jwtredis.util.ParseUtil;
-import com.namusd.jwtredis.util.VideoUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -37,12 +37,12 @@ public class VideoService {
     @Transactional
     public String insertVideo(Authentication auth, String workTitle, MultipartFile file) {
         User loginUser = ((PrincipalDetails) auth.getPrincipal()).getUser();
-        double duration = VideoUtil.getVideoDuration(file);
+//        double duration = VideoUtil.getVideoDuration(file); // python에서 처리 후 응답 데이터에서 duration 가져오도록 수정
         Video video = Video.builder()
                 .videoTitle(file.getOriginalFilename())
                 .workTitle(workTitle)
                 .owner(loginUser)
-                .duration(duration)
+//                .duration(duration)
                 .build();
         Video entity = videoRepository.save(video);
         return entity.getVideoId().toString();
@@ -80,5 +80,29 @@ public class VideoService {
         Video video = videoRepository.findVideoDetail(UUID.fromString(videoId))
                 .orElseThrow(() -> new EntityNotFoundException("없어"));
         return video.toDetail();
+    }
+
+    /**
+     * original to proccesd 처리 후 완료 응답에서 영상의 메타데이터 추출해
+     * video의 메타데이터를 업데이트 (READY to
+     * @param response
+     */
+    @Transactional
+    public void saveProccesdMetadata(MessageDto.KafkaProcessedResponseMessage response) {
+        log.info("complete proccesed message response: " + response);
+        Video video = VideoServiceHelper.findVideoById(response.getVideoId(), videoRepository);
+        video.updateMetadata(response);
+    }
+
+    /**
+     * processed to final 처리 후 완료 응답에서 영상의 메타데이터 추출해
+     * video의 메타데이터를 업데이트 (COMPLETE)
+     * @param response
+     */
+    @Transactional
+    public void saveFinalizedMetadata(MessageDto.KafkaFinalizedResponseMessage response) {
+        log.info("complete finalized message response: " + response);
+        Video video = VideoServiceHelper.findVideoById(response.getVideoId(), videoRepository);
+        video.updateMetadata();
     }
 }
