@@ -141,4 +141,43 @@ public class VideoFacade {
         var future = kafkaTemplate.send(record);
         future.addCallback(new LogCallback());
     }
+
+
+
+
+    /**
+     * origianl to processed 처리 완료 시
+     * 영상 메타데이터 업데이트하고(width, height, fps, duration... ),
+     * processed 영상의 메타데이터를 저장
+     * @param response
+     */
+    public void updateMetadataFromProcessedResponse(MessageDto.KafkaProcessedResponseMessage response) {
+        // original 영상 메타데이터 업데이트
+        videoService.saveProccesdMetadata(response);
+
+        // 영상 처리에 사용된 metadata.json 메타데이터를 db에 저장
+        attachFileService.saveFileData(response.getVideoId(), FileUtil.withJsonExtension(FileNameConstant.FILENAME_METADATA), AttachFileType.METADATA);
+
+
+        String fileName = FileNameConstant.FILENAME_PROCESSED + FileUtil.getFileExtension(response.getProcessedVideoUrl());
+        // 처리된 proccesed 영상의 메타데이터를 attach_file 테이블에 저장
+        attachFileService.saveFileData(response.getVideoId(), fileName, AttachFileType.VIDEO);
+    }
+
+    /**
+     * processed to final 처리 완료 시
+     * final 영상의 메타데이터를 저장
+     * @param response
+     */
+    public void updateMetadataFromFinalizedResponse(MessageDto.KafkaFinalizedResponseMessage response) {
+        // original 영상 메타데이터 업데이트
+        videoService.saveFinalizedMetadata(response);
+
+        String fileName = FileNameConstant.FILENAME_FINAL + FileUtil.getFileExtension(response.getFinalizedVideoUrl());
+        // 처리된 proccesed 영상의 메타데이터를 attach_file 테이블에 저장
+        attachFileService.saveFileData(response.getVideoId(), fileName, AttachFileType.VIDEO);
+    }
+
+
+
 }
