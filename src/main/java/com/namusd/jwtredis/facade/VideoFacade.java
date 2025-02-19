@@ -153,7 +153,7 @@ public class VideoFacade {
      */
     public void updateMetadataFromProcessedResponse(MessageDto.KafkaProcessedResponseMessage response) {
         // original 영상 메타데이터 업데이트
-        videoService.saveProccesdMetadata(response);
+        videoService.saveProcessedMetadata(response);
 
         // 영상 처리에 사용된 metadata.json 메타데이터를 db에 저장
         attachFileService.saveFileData(response.getVideoId(), FileUtil.withJsonExtension(FileNameConstant.FILENAME_METADATA), AttachFileType.METADATA);
@@ -175,6 +175,7 @@ public class VideoFacade {
 
         String fileName = FileNameConstant.FILENAME_FINAL + FileUtil.getFileExtension(response.getFinalizedVideoUrl());
         // 처리된 proccesed 영상의 메타데이터를 attach_file 테이블에 저장
+        // TODO: video 테이블에 매핑
         attachFileService.saveFileData(response.getVideoId(), fileName, AttachFileType.VIDEO);
     }
 

@@ -61,13 +61,6 @@ public class VideoService {
         future.addCallback(new LogCallback());
     }
 
-    @Transactional
-    public void saveTimelineFrameData(TimelineDto.KafkaResponseMessage response) {
-        System.out.println("message response: " + response);
-        Video video = VideoServiceHelper.findVideoById(response.getVideoId(), videoRepository);
-        video.registerMetadata(response);
-    }
-
     @Transactional(readOnly = true)
     public Page<VideoDto.Response> getVideoList(Authentication auth, Pageable pageable) {
         User loginUser = ((PrincipalDetails) auth.getPrincipal()).getUser();
@@ -88,8 +81,8 @@ public class VideoService {
      * @param response
      */
     @Transactional
-    public void saveProccesdMetadata(MessageDto.KafkaProcessedResponseMessage response) {
-        log.info("complete proccesed message response: " + response);
+    public void saveProcessedMetadata(MessageDto.KafkaProcessedResponseMessage response) {
+        log.info("complete processed message response: {}", response);
         Video video = VideoServiceHelper.findVideoById(response.getVideoId(), videoRepository);
         video.updateMetadata(response);
     }
