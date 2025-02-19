@@ -1,7 +1,10 @@
 package com.namusd.jwtredis.api;
 
 import com.namusd.jwtredis.facade.VideoFacade;
+import com.namusd.jwtredis.model.dto.AttachFileDto;
 import com.namusd.jwtredis.model.dto.video.VideoDto;
+import com.namusd.jwtredis.model.entity.attachFile.AttachFile;
+import com.namusd.jwtredis.service.AttachFileServiceImpl;
 import com.namusd.jwtredis.service.VideoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,12 +26,13 @@ public class VideoProcessingController {
 
     private final VideoFacade videoFacade;
     private final VideoService videoService;
+    private final AttachFileServiceImpl attachFileServiceImpl;
 
     @PostMapping(consumes = {"multipart/form-data"})
     public ResponseEntity<?> registerVideo(
             Authentication auth,
             @RequestPart("file") MultipartFile file,
-            @RequestPart(value = "images", required = false) List<MultipartFile> targetImages, // TODO: FRONT, SIDE FACE 구분 저장.. 현재 NORMAL TYPE 으로 한 번에 저장
+            @RequestPart(value = "images") List<MultipartFile> targetImages, // TODO: FRONT, SIDE FACE 구분 저장.. 현재 NORMAL TYPE 으로 한 번에 저장
             @RequestPart("workTitle") String workTitle
     ) {
         String videoId = videoFacade.registerVideo(file, targetImages, workTitle, auth);
@@ -63,4 +67,11 @@ public class VideoProcessingController {
         videoFacade.editAndFinalizeVideo(auth, videoId, editedMetadata);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/final/{videoId}")
+    public ResponseEntity<?> getFinalVideo(Authentication auth, @PathVariable("videoId") String videoId) {
+        AttachFileDto.Response response = attachFileServiceImpl.getFinalVideo(auth, videoId);
+        return ResponseEntity.ok(response);
+    }
+
 }

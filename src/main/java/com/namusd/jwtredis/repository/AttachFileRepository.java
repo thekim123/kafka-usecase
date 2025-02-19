@@ -13,4 +13,5 @@ public interface AttachFileRepository extends JpaRepository<AttachFile, Long> {
     @Query("SELECT a.filePath FROM AttachFile a WHERE a.fileDir = :fileDir AND a.fileName = 'processed.mp4'")
     Optional<String> findFilePathByFileDir(@Param("fileDir") String fileDir);
 
+    Optional<AttachFile> findFirstByFileDirAndFileNameOrderByCreatedAtDesc(String fileDir, String fileName);
 }

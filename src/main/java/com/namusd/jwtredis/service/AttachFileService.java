@@ -1,7 +1,9 @@
 package com.namusd.jwtredis.service;
 
+import com.namusd.jwtredis.model.dto.AttachFileDto;
 import com.namusd.jwtredis.model.entity.attachFile.AttachFile;
 import com.namusd.jwtredis.model.entity.attachFile.AttachFileType;
+import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -35,4 +37,7 @@ public interface AttachFileService {
     InputStream getFile(String filePath);
 
     String getFilePath(String videoId);
+
+    @Transactional(readOnly = true)
+    AttachFileDto.Response getFinalVideo(Authentication auth, String videoId);
 }

@@ -1,6 +1,8 @@
 package com.namusd.jwtredis.service;
 
 import com.namusd.jwtredis.handler.ex.EntityNotFoundException;
+import com.namusd.jwtredis.model.constant.FileNameConstant;
+import com.namusd.jwtredis.model.dto.AttachFileDto;
 import com.namusd.jwtredis.model.entity.attachFile.AttachFile;
 import com.namusd.jwtredis.model.entity.attachFile.AttachFileType;
 import com.namusd.jwtredis.repository.AttachFileRepository;
@@ -13,6 +15,7 @@ import io.minio.errors.MinioException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,6 +27,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -234,4 +238,14 @@ public class AttachFileServiceImpl implements AttachFileService {
         return fileRepository.findFilePathByFileDir(videoId)
                 .orElseThrow(() -> new EntityNotFoundException("파일 데이터가 DB에 없어요"));
     }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public AttachFileDto.Response getFinalVideo(Authentication auth, String videoId) {
+        AttachFile file = fileRepository.findFirstByFileDirAndFileNameOrderByCreatedAtDesc(videoId, FileNameConstant.FILENAME_FINAL + ".mp4")
+                .orElseThrow(() -> new EntityNotFoundException("없어"));
+        return file.toDto();
+    }
+
 }
