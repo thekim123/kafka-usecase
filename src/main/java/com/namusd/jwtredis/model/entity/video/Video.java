@@ -98,7 +98,8 @@ public class Video extends BaseTimeEntity {
     }
 
     //TODO: registerMetadata, updateMetadata 통합
-    public void updateMetadata(MessageDto.KafkaProcessedResponseMessage response) {
+//    public void updateMetadata(MessageDto.KafkaProcessedResponseMessage response) {
+    public void updateVideoStatusReady(MessageDto.KafkaProcessedResponseMessage response) {
         this.videoStatus = VideoStatus.READY;
         this.fps = response.getVideoMetadata().getFps();
         this.width = response.getVideoMetadata().getWidth();
@@ -108,10 +109,34 @@ public class Video extends BaseTimeEntity {
     }
 
 
-    public void updateMetadata() {
+    public void updateVideoStatus(VideoStatus videoStatus) {
+        switch (videoStatus) {
+            case CORRECTION:
+                updateVideoStatusCorrection();
+                break;
+            case COMPLETE:
+                updateVideoStatusComplete();
+                break;
+            case ERROR:
+                updateVideoStatusError();
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported VideoStatus: " + videoStatus);
+        }
+    }
+
+
+    private void updateVideoStatusCorrection() {
+        this.videoStatus = VideoStatus.CORRECTION;
+    }
+
+    private void updateVideoStatusComplete() {
         this.videoStatus = VideoStatus.COMPLETE;
     }
 
+    private void updateVideoStatusError() {
+        this.videoStatus = VideoStatus.ERROR;
+    }
 
 
 

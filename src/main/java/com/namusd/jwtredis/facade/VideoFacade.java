@@ -3,11 +3,13 @@ package com.namusd.jwtredis.facade;
 import com.namusd.jwtredis.callback.LogCallback;
 import com.namusd.jwtredis.model.constant.FileNameConstant;
 import com.namusd.jwtredis.model.constant.FilePathConstant;
+import com.namusd.jwtredis.model.constant.ProcessStatusConstant;
 import com.namusd.jwtredis.model.dto.video.ImageDto;
 import com.namusd.jwtredis.model.dto.video.MessageDto;
 import com.namusd.jwtredis.model.entity.attachFile.AttachFile;
 import com.namusd.jwtredis.model.entity.attachFile.AttachFileType;
 import com.namusd.jwtredis.model.entity.video.ImageType;
+import com.namusd.jwtredis.model.entity.video.VideoStatus;
 import com.namusd.jwtredis.service.AttachFileService;
 import com.namusd.jwtredis.service.ImageService;
 import com.namusd.jwtredis.service.VideoService;
@@ -128,6 +130,9 @@ public class VideoFacade {
         // edtied_metadata 버킷 업로드
         attachFileService.uploadJsonContent(editedMetadata, videoId, FileUtil.withJsonExtension(FileNameConstant.FILENAME_EDITED_METADATA));
 
+        // video 처리 상태 변경
+        videoService.changeVideoStatus(videoId, VideoStatus.CORRECTION);
+
 
         MessageDto.KafkaRequestMessage request = MessageDto.KafkaRequestMessage.builder()
                 .bucket(this.bucket)
@@ -170,6 +175,11 @@ public class VideoFacade {
      * @param response
      */
     public void updateMetadataFromFinalizedResponse(MessageDto.KafkaFinalizedResponseMessage response) {
+        if (!response.getStatus().equals(ProcessStatusConstant.PROCESS_STATUS_SUCCESS)){
+            videoService.changeVideoStatus(response.getVideoId(), VideoStatus.ERROR);
+            return;
+        }
+
         // original 영상 메타데이터 업데이트
         videoService.saveFinalizedMetadata(response);
 
