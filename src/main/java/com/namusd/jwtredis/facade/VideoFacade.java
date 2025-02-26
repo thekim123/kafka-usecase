@@ -16,6 +16,7 @@ import com.namusd.jwtredis.service.VideoService;
 import com.namusd.jwtredis.util.FileUtil;
 import com.namusd.jwtredis.util.ParseUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -29,6 +30,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class VideoFacade {
     private final AttachFileService attachFileService;
     private final VideoService videoService;
@@ -156,17 +158,17 @@ public class VideoFacade {
      * processed 영상의 메타데이터를 저장
      * @param response
      */
+    @Transactional
     public void updateMetadataFromProcessedResponse(MessageDto.KafkaProcessedResponseMessage response) {
+        if (!response.getStatus().equals(ProcessStatusConstant.PROCESS_STATUS_SUCCESS)){
+            videoService.changeVideoStatus(response.getVideoId(), VideoStatus.ERROR);
+            return;
+        }
         // original 영상 메타데이터 업데이트
         videoService.saveProcessedMetadata(response);
 
         // 영상 처리에 사용된 metadata.json 메타데이터를 db에 저장
         attachFileService.saveFileData(response.getVideoId(), FileUtil.withJsonExtension(FileNameConstant.FILENAME_METADATA), AttachFileType.METADATA);
-
-
-        String fileName = FileNameConstant.FILENAME_PROCESSED + FileUtil.getFileExtension(response.getProcessedVideoUrl());
-        // 처리된 proccesed 영상의 메타데이터를 attach_file 테이블에 저장
-        attachFileService.saveFileData(response.getVideoId(), fileName, AttachFileType.VIDEO);
     }
 
     /**
@@ -174,6 +176,7 @@ public class VideoFacade {
      * final 영상의 메타데이터를 저장
      * @param response
      */
+    @Transactional
     public void updateMetadataFromFinalizedResponse(MessageDto.KafkaFinalizedResponseMessage response) {
         if (!response.getStatus().equals(ProcessStatusConstant.PROCESS_STATUS_SUCCESS)){
             videoService.changeVideoStatus(response.getVideoId(), VideoStatus.ERROR);

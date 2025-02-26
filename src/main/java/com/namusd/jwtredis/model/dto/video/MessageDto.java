@@ -41,8 +41,6 @@ public class MessageDto {
         private String status;
         @JsonProperty("video_id")
         private String videoId;
-        @JsonProperty("processed_video_url")
-        private String processedVideoUrl;
         @JsonProperty("metadata_url")
         private String metadataUrl;
         private String message;
