@@ -124,8 +124,6 @@ public class VideoFacade {
 
     /** 최종 영상 처리 요청*/
     public void editAndFinalizeVideo(Authentication auth, String videoId, String editedMetadata) {
-        // 파일이 저장된 경로
-        String filePath = attachFileService.getFilePath(videoId);
 
         // edtied_metadata DB 저장
         attachFileService.saveFileData(videoId, FileUtil.withJsonExtension(FileNameConstant.FILENAME_EDITED_METADATA), AttachFileType.EDITED_METADATA);
@@ -139,7 +137,6 @@ public class VideoFacade {
         MessageDto.KafkaRequestMessage request = MessageDto.KafkaRequestMessage.builder()
                 .bucket(this.bucket)
                 .bucket_name(bucket)
-                .url(filePath)
                 .videoId(videoId)
                 .build();
 
