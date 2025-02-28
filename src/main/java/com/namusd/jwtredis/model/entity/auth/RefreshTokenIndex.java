@@ -5,6 +5,7 @@ import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @AllArgsConstructor
@@ -16,6 +17,7 @@ import java.util.Map;
 public class RefreshTokenIndex {
     @Id
     private String username;
-    private Map<String, String> tokenIds; // 토큰ID 맵핑
+    @Builder.Default
+    private Map<String, String> tokenIds = new HashMap<>(); // 토큰ID 맵핑
 
 }
